@@ -1,15 +1,15 @@
 /* ==========================================================================
-   DEWANYA NYEMIL — Katalog & Order
+   DEWANYA NYEMIL — Katalog & Order (dengan keranjang)
    Vanilla JS, tanpa dependensi.
-   1. Render katalog         4. Popup order (jumlah + opsi)
-   2. Pencarian & kategori   5. Kirim ke WhatsApp
-   3. Header                 6. Toast
+   1. Render katalog         5. Tambah ke keranjang
+   2. Pencarian & kategori   6. Panel keranjang
+   3. Header                 7. Kirim semua ke WhatsApp / toast
+   4. Popup pilih item
    ========================================================================== */
 (function () {
   'use strict';
 
   var doc = document;
-  var root = doc.documentElement;
 
   /* ---------- Konfigurasi ---------- */
   // Nomor WhatsApp tujuan order (format internasional tanpa "+").
@@ -193,6 +193,11 @@
   function openWA(text) { window.open(waLink(text), '_blank'); }
   function byId(id) { return MENU.filter(function (m) { return m.id === id; })[0]; }
   function catIco(c) { return CAT_META[c] ? CAT_META[c].ico : 'fa-utensils'; }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
 
   var toastEl = doc.getElementById('toast');
   var toastTimer;
@@ -202,6 +207,29 @@
     toastEl.classList.add('is-show');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { toastEl.classList.remove('is-show'); }, 2600);
+  }
+
+  /* ---------- Label opsi terpilih (dipakai popup & keranjang) ---------- */
+  function pickedLabels(item, choices) {
+    var out = [];
+    if (!item.opts) return out;
+    item.opts.forEach(function (g) {
+      var picked = (choices && choices[g.key]) || [];
+      var labels = g.choices
+        .filter(function (ch) { return picked.indexOf(ch.id) > -1; })
+        .map(function (ch) { return ch.label; });
+      if (labels.length) out.push({ label: g.label, text: labels.join(', ') });
+    });
+    return out;
+  }
+  function extraFromChoices(item, choices) {
+    if (!item.opts) return 0;
+    var extra = 0;
+    item.opts.forEach(function (g) {
+      var picked = (choices && choices[g.key]) || [];
+      g.choices.forEach(function (ch) { if (picked.indexOf(ch.id) > -1 && ch.add) extra += ch.add; });
+    });
+    return extra;
   }
 
   /* ---------- 1. Render katalog ---------- */
@@ -273,7 +301,6 @@
         c.classList.toggle('is-active', on);
         c.setAttribute('aria-selected', on ? 'true' : 'false');
       });
-      // pastikan chip aktif terlihat di layar (scroll horizontal di HP)
       var act = chipBar.querySelector('.chip.is-active');
       if (act && act.scrollIntoView) {
         try { act.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (err) {}
@@ -299,7 +326,9 @@
     });
   }
 
-  /* ---------- 4. Popup order ---------- */
+  /* ==========================================================================
+     4. POPUP PILIH ITEM
+     ========================================================================== */
   var sheet = doc.getElementById('order-sheet');
   var state = { item: null, qty: 1, choices: {} };
 
@@ -318,10 +347,8 @@
     wasEl.textContent = item.was ? CURRENCY(item.was) : '';
     wasEl.hidden = !item.was;
     doc.getElementById('order-qty').textContent = '1';
-    doc.getElementById('order-name').value = '';
     doc.getElementById('order-note').value = '';
 
-    // bangun opsi
     var wrap = doc.getElementById('opt-groups');
     if (item.opts && item.opts.length) {
       wrap.innerHTML = item.opts.map(function (g) {
@@ -344,7 +371,6 @@
         '</fieldset>';
       }).join('');
 
-      // radio pertama otomatis terpilih -> catat di state
       item.opts.forEach(function (g) {
         if (g.type === 'radio') state.choices[g.key] = [g.choices[0].id];
         else state.choices[g.key] = [];
@@ -366,10 +392,9 @@
   function closeSheet() {
     sheet.classList.remove('is-open');
     sheet.setAttribute('aria-hidden', 'true');
-    doc.body.style.overflow = '';
+    if (!doc.getElementById('cart-sheet').classList.contains('is-open')) doc.body.style.overflow = '';
   }
 
-  // pilihan berubah
   doc.getElementById('opt-groups').addEventListener('change', function (e) {
     var input = e.target;
     if (input.tagName !== 'INPUT') return;
@@ -386,7 +411,6 @@
     updateTotal();
   });
 
-  // jumlah
   sheet.addEventListener('click', function (e) {
     var q = e.target.closest('[data-qty]');
     if (q) {
@@ -398,62 +422,201 @@
     if (e.target.closest('[data-close]')) closeSheet();
   });
 
-  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
-
-  // hitung tambahan dari opsi terpilih
-  function extraTotal() {
-    var item = state.item;
-    if (!item || !item.opts) return 0;
-    var extra = 0;
-    item.opts.forEach(function (g) {
-      var picked = state.choices[g.key] || [];
-      g.choices.forEach(function (ch) {
-        if (picked.indexOf(ch.id) > -1 && ch.add) extra += ch.add;
-      });
-    });
-    return extra;
-  }
-
-  function unitPrice() { return (state.item ? state.item.price : 0) + extraTotal(); }
+  function unitPrice() { return (state.item ? state.item.price : 0) + extraFromChoices(state.item, state.choices); }
 
   function updateTotal() {
     doc.getElementById('order-total').textContent = CURRENCY(unitPrice() * state.qty);
   }
 
-  /* ---------- 5. Kirim ke WhatsApp ---------- */
-  doc.getElementById('order-submit').addEventListener('click', function () {
-    var item = state.item;
-    if (!item) return;
+  /* ==========================================================================
+     5. KERANJANG — state, render, tambah, hapus
+     ========================================================================== */
+  var cart = [];
+  var cartBar = doc.getElementById('cartbar');
+  var cartSheet = doc.getElementById('cart-sheet');
+  var cartList = doc.getElementById('cart-list');
 
-    var lines = ['Halo ' + STORE + ', saya mau pesan:', ''];
-    lines.push('- ' + item.name + ' x' + state.qty);
-
-    // rincian opsi terpilih
+  function cartCount() {
+    return cart.reduce(function (n, r) { return n + r.qty; }, 0);
+  }
+  function cartTotal() {
+    return cart.reduce(function (n, r) { return n + r.qty * r.unit; }, 0);
+  }
+  /* Kunci baris = item + kombinasi opsi, supaya yang sama digabung qty-nya */
+  function lineKey(item, choices) {
+    var parts = [];
     if (item.opts) {
       item.opts.forEach(function (g) {
-        var picked = state.choices[g.key] || [];
-        if (!picked.length) return;
-        var labels = g.choices
-          .filter(function (ch) { return picked.indexOf(ch.id) > -1; })
-          .map(function (ch) { return ch.label; });
-        lines.push('    ' + g.label + ': ' + labels.join(', '));
+        parts.push(g.key + ':' + ((choices && choices[g.key]) || []).slice().sort().join('|'));
       });
     }
+    return item.id + '#' + parts.join(';');
+  }
 
-    lines.push('    Subtotal: ' + CURRENCY(unitPrice() * state.qty));
+  function addToCart(item, choices, qty, note) {
+    var key = lineKey(item, choices);
+    var existing = null;
+    for (var i = 0; i < cart.length; i++) { if (cart[i].key === key) { existing = cart[i]; break; } }
+    if (existing) {
+      existing.qty += qty;
+      if (note) existing.note = note;
+    } else {
+      cart.push({
+        key: key, id: item.id, name: item.name, img: item.img, cat: item.cat,
+        qty: qty, unit: item.price + extraFromChoices(item, choices),
+        labels: pickedLabels(item, choices), note: note || ''
+      });
+    }
+    renderCart();
+  }
+
+  function renderCart() {
+    var n = cartCount(), total = cartTotal();
+
+    // bar mengambang
+    if (n > 0) {
+      cartBar.hidden = false;
+      doc.body.classList.add('has-cart');
+      doc.getElementById('cart-count').textContent = n + ' item';
+      doc.getElementById('cart-total').textContent = CURRENCY(total);
+    } else {
+      cartBar.hidden = true;
+      doc.body.classList.remove('has-cart');
+    }
+
+    // panel
+    doc.getElementById('cart-sub').textContent = n
+      ? 'Periksa pesananmu, lalu kirim lewat WhatsApp.'
+      : 'Belum ada item. Pilih menu dulu ya.';
+    doc.getElementById('cart-n').textContent = '(' + n + ' item)';
+    doc.getElementById('cart-sum').textContent = CURRENCY(total);
+    var submit = doc.getElementById('cart-submit');
+    submit.disabled = n === 0;
+    doc.getElementById('cart-clear').hidden = n === 0;
+
+    if (!n) {
+      cartList.innerHTML = '<div class="cart-empty">' +
+        '<i class="fas fa-cart-shopping" aria-hidden="true"></i>' +
+        '<p>Keranjangmu masih kosong.<br>Tap menu favoritmu untuk mulai pesan.</p>' +
+        '<button class="btn btn--red" type="button" data-close>' +
+        '<i class="fas fa-utensils" aria-hidden="true"></i> Lihat Menu</button></div>';
+      return;
+    }
+
+    cartList.innerHTML = cart.map(function (r, i) {
+      var optsHtml = r.labels.map(function (o) {
+        return '<b>' + esc(o.label) + ':</b> ' + esc(o.text);
+      }).join(' · ');
+      if (r.note) optsHtml += (optsHtml ? ' · ' : '') + '<b>Catatan:</b> ' + esc(r.note);
+      return '<div class="cart-row" data-i="' + i + '">' +
+        '<img class="cart-row__img" src="' + r.img + '" alt="" width="62" height="62" loading="lazy">' +
+        '<div class="cart-row__body">' +
+          '<div class="cart-row__name">' + esc(r.name) + '</div>' +
+          '<div class="cart-row__opts">' + optsHtml + '</div>' +
+          '<div class="cart-row__under">' +
+            '<span class="cart-row__price">' + CURRENCY(r.unit) + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="cart-row__right">' +
+          '<button class="cart-row__del" type="button" data-del aria-label="Hapus ' + esc(r.name) + '">' +
+            '<i class="fas fa-trash-can" aria-hidden="true"></i></button>' +
+          '<div class="qty qty--sm">' +
+            '<button class="qty__btn" type="button" data-q="-1" aria-label="Kurangi">&minus;</button>' +
+            '<span class="qty__val">' + r.qty + '</span>' +
+            '<button class="qty__btn" type="button" data-q="1" aria-label="Tambah">+</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join('') +
+      '<button class="cart-more" type="button" data-close>' +
+        '<i class="fas fa-plus" aria-hidden="true"></i> Tambah menu lain</button>';
+  }
+
+  /* -- Tambah ke keranjang dari popup -- */
+  doc.getElementById('order-add').addEventListener('click', function () {
+    var item = state.item;
+    if (!item) return;
+    addToCart(item, state.choices, state.qty, doc.getElementById('order-note').value.trim());
+    closeSheet();
+    toast(item.name + ' x' + state.qty + ' masuk keranjang.');
+  });
+
+  /* -- Buka / tutup panel keranjang -- */
+  function openCart() {
+    cartSheet.classList.add('is-open');
+    cartSheet.setAttribute('aria-hidden', 'false');
+    doc.body.style.overflow = 'hidden';
+    var sc = cartSheet.querySelector('.sheet__scroll');
+    if (sc) sc.scrollTop = 0;
+  }
+  function closeCart() {
+    cartSheet.classList.remove('is-open');
+    cartSheet.setAttribute('aria-hidden', 'true');
+    if (!sheet.classList.contains('is-open')) doc.body.style.overflow = '';
+  }
+
+  doc.getElementById('cart-open').addEventListener('click', openCart);
+  cartSheet.addEventListener('click', function (e) {
+    if (e.target.closest('[data-close]')) { closeCart(); return; }
+
+    var row = e.target.closest('.cart-row');
+    if (!row) return;
+    var i = Number(row.getAttribute('data-i'));
+
+    if (e.target.closest('[data-del]')) {
+      var removed = cart[i];
+      cart.splice(i, 1);
+      renderCart();
+      if (removed) toast(removed.name + ' dihapus dari keranjang.');
+      return;
+    }
+    var q = e.target.closest('[data-q]');
+    if (q) {
+      cart[i].qty = Math.max(1, cart[i].qty + Number(q.getAttribute('data-q')));
+      renderCart();
+    }
+  });
+
+  doc.getElementById('cart-clear').addEventListener('click', function () {
+    if (!cart.length) return;
+    cart = [];
+    renderCart();
+    toast('Keranjang dikosongkan.');
+  });
+
+  /* ==========================================================================
+     6. KIRIM KE WHATSAPP
+     ========================================================================== */
+  doc.getElementById('cart-submit').addEventListener('click', function () {
+    if (!cart.length) return;
+
+    var lines = ['Halo ' + STORE + ', saya mau pesan:', ''];
+    cart.forEach(function (r, i) {
+      lines.push((i + 1) + '. ' + r.name + ' x' + r.qty);
+      r.labels.forEach(function (o) { lines.push('    ' + o.label + ': ' + o.text); });
+      lines.push('    Subtotal: ' + CURRENCY(r.unit * r.qty));
+    });
+
     lines.push('');
-    lines.push('Total: ' + CURRENCY(unitPrice() * state.qty));
+    lines.push('Total: ' + CURRENCY(cartTotal()) + ' (' + cartCount() + ' item)');
 
-    var name = doc.getElementById('order-name').value.trim();
-    var note = doc.getElementById('order-note').value.trim();
+    var name = doc.getElementById('cust-name').value.trim();
+    var note = doc.getElementById('cust-note').value.trim();
     if (name) lines.push('Nama: ' + name);
     if (note) lines.push('Catatan: ' + note);
     lines.push('');
     lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
 
     openWA(lines.join('\n'));
-    closeSheet();
+    closeCart();
     toast('Pesanan dibuka di WhatsApp. Tekan kirim untuk menyelesaikan.');
+  });
+
+  /* -- Esc menutup panel yang terbuka -- */
+  doc.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (cartSheet.classList.contains('is-open')) closeCart();
+    else closeSheet();
   });
 
   /* -- Ketuk kartu -> buka popup -- */
@@ -486,7 +649,7 @@
     });
   });
 
-  /* ---------- 6. Header shadow saat scroll ---------- */
+  /* ---------- 7. Header shadow saat scroll ---------- */
   var head = doc.querySelector('.site-head');
   var onScroll = function () { if (head) head.classList.toggle('is-stuck', window.scrollY > 8); };
   onScroll();
@@ -494,4 +657,5 @@
 
   /* ---------- Inisialisasi ---------- */
   render();
+  renderCart();
 })();

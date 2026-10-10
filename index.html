@@ -27,7 +27,7 @@
     <meta name="theme-color" content="#D92727">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/style.css?v=dn005">
+    <link rel="stylesheet" href="assets/style.css?v=dn006">
 </head>
 
 <body class="page-order">
@@ -152,18 +152,17 @@
                 <i class="fas fa-xmark" aria-hidden="true"></i>
             </button>
 
+            <div class="order-hero">
+                <img class="order-hero__img" id="order-img" src="" alt="">
+                <span class="order-hero__cat" id="order-cat"></span>
+            </div>
+
             <div class="sheet__scroll">
-                <div class="order-item">
-                    <img class="order-item__img" id="order-img" src="" alt="">
-                    <div class="order-item__meta">
-                        <span class="order-item__cat" id="order-cat"></span>
-                        <h2 class="order-item__name" id="order-title"></h2>
-                        <p class="order-item__desc" id="order-desc"></p>
-                        <div class="order-item__price">
-                            <span class="order-item__now" id="order-price"></span>
-                            <span class="order-item__was" id="order-was"></span>
-                        </div>
-                    </div>
+                <h2 class="order-title" id="order-title"></h2>
+                <p class="order-desc" id="order-desc"></p>
+                <div class="order-price">
+                    <span class="order-price__now" id="order-price"></span>
+                    <span class="order-price__was" id="order-was"></span>
                 </div>
 
                 <!-- Opsi -->
@@ -179,27 +178,70 @@
                     </div>
                 </div>
 
-                <!-- Nama & catatan -->
-                <div class="opt-groups">
-                    <div class="opt-group">
-                        <label class="opt-group__label" for="order-name">Nama pemesan <span>(opsional)</span></label>
-                        <input id="order-name" class="opt-input" type="text" placeholder="Contoh: Dewa" autocomplete="name">
-                    </div>
-                    <div class="opt-group">
-                        <label class="opt-group__label" for="order-note">Catatan <span>(opsional)</span></label>
-                        <textarea id="order-note" class="opt-input" rows="2"
-                            placeholder="Contoh: alamat lengkap, saus dipisah"></textarea>
-                    </div>
+                <div class="opt-group opt-group--note">
+                    <label class="opt-group__label" for="order-note">Catatan untuk item ini <span>(opsional)</span></label>
+                    <input id="order-note" class="opt-input" type="text" placeholder="Contoh: saus dipisah, tanpa bawang">
                 </div>
             </div>
 
             <div class="sheet__foot">
                 <div class="sheet__total">
-                    <span class="sheet__total-label">Total</span>
+                    <span class="sheet__total-label">Subtotal</span>
                     <span class="sheet__total-val" id="order-total">Rp0</span>
                 </div>
-                <button class="btn btn--wa btn--lg btn--block" id="order-submit" type="button">
-                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Kirim Pesanan
+                <button class="btn btn--red btn--lg btn--block" id="order-add" type="button">
+                    <i class="fas fa-cart-plus" aria-hidden="true"></i> Tambah ke Keranjang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BAR KERANJANG (mengambang bawah) ===== -->
+    <div class="cartbar" id="cartbar" hidden>
+        <button class="cartbar__btn" type="button" id="cart-open" aria-label="Lihat keranjang">
+            <span class="cartbar__icon"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span>
+            <span class="cartbar__meta">
+                <span class="cartbar__count" id="cart-count">0 item</span>
+                <span class="cartbar__total" id="cart-total">Rp0</span>
+            </span>
+            <span class="cartbar__go">Lihat Keranjang <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+        </button>
+    </div>
+
+    <!-- ===== PANEL KERANJANG ===== -->
+    <div class="sheet sheet--cart" id="cart-sheet" aria-hidden="true">
+        <div class="sheet__scrim" data-close></div>
+        <div class="sheet__panel sheet__panel--cart" role="dialog" aria-modal="true" aria-labelledby="cart-title">
+            <button class="sheet__close" type="button" data-close aria-label="Tutup">
+                <i class="fas fa-xmark" aria-hidden="true"></i>
+            </button>
+
+            <div class="sheet__scroll">
+                <h2 class="sheet__h" id="cart-title">
+                    <i class="fas fa-cart-shopping" aria-hidden="true"></i> Keranjang Kamu
+                </h2>
+                <p class="sheet__sub" id="cart-sub">Belum ada item. Pilih menu dulu ya.</p>
+                <div class="cart-list" id="cart-list"></div>
+            </div>
+
+            <div class="sheet__foot">
+                <div class="opt-group opt-group--note">
+                    <label class="opt-group__label" for="cust-name">Nama pemesan <span>(opsional)</span></label>
+                    <input id="cust-name" class="opt-input" type="text" placeholder="Contoh: Dewa" autocomplete="name">
+                </div>
+                <div class="opt-group opt-group--note">
+                    <label class="opt-group__label" for="cust-note">Catatan pesanan <span>(opsional)</span></label>
+                    <input id="cust-note" class="opt-input" type="text" placeholder="Contoh: alamat, ongkir, jam ambil">
+                </div>
+                <div class="sheet__total">
+                    <span class="sheet__total-label">Total <span id="cart-n">(0 item)</span></span>
+                    <span class="sheet__total-val" id="cart-sum">Rp0</span>
+                </div>
+                <button class="btn btn--wa btn--lg btn--block" id="cart-submit" type="button" disabled>
+                    <i class="fab fa-whatsapp" aria-hidden="true"></i> Kirim Pesanan via WhatsApp
+                </button>
+                <button class="btn btn--ghost btn--block cart-clear" type="button" id="cart-clear">
+                    <i class="fas fa-trash-can" aria-hidden="true"></i> Kosongkan keranjang
                 </button>
             </div>
         </div>
@@ -207,8 +249,10 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
     <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-    <script src="assets/app.js?v=dn005"></script>
+    <script src="assets/app.js?v=dn006"></script>
 </body>
 
 </html>
