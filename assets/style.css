@@ -472,7 +472,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .mcard__price-now { font-size: clamp(19px, 1.6vw, 23px); font-weight: var(--fw-bold); color: var(--navy); letter-spacing: -.02em; }
 .mcard__price-was { font-size: var(--fs-sm); color: var(--text-2); text-decoration: line-through; }
 
-.mcard__foot { display: flex; align-items: center; gap: 10px; margin-top: auto; }
+.mcard__foot { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+
+/* Tombol order utama di kartu: 1 klik langsung WhatsApp */
+.mcard__order { font-size: 15.5px; padding: 12px 18px; }
+.mcard__order.is-done { background: var(--success); border-color: var(--success); }
+
+/* Pembatas halus antara tombol order dan kontrol qty */
+.mcard__foot { padding-top: 12px; border-top: 1px dashed var(--border); }
 
 /* Kontrol kuantitas */
 .qty {

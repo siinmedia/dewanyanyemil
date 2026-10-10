@@ -92,11 +92,12 @@ Untuk regenerate placeholder: `python3 make_images.py`
 
 ## Fitur
 
+- **Order sekali klik**: tombol **Order Sekarang** di tiap kartu langsung membuka WhatsApp dengan
+  pesan siap kirim (`Halo Dewanya Nyemil, saya mau pesan: - Nama Menu (Rp…)`). Pembeli tinggal tekan kirim.
+- **Pesan beberapa sekaligus** (opsional): **Tambah ke keranjang** -> panel keranjang terbuka otomatis,
+  jumlah diatur dengan tombol −/+, total dihitung otomatis, lalu kirim sebagai satu pesanan.
 - **Filter kategori** (chip) + **pencarian** menu real-time.
-- **Keranjang**: tambah/kurangi jumlah per menu, total otomatis, panel bawah (bottom sheet).
-- **Pesan WhatsApp**: pesan tersusun otomatis (menu × qty = subtotal, total, nama, catatan)
-  lalu dibuka di `wa.me` — pembeli tinggal tekan kirim.
-- **Nama & catatan** opsional pada keranjang.
+- **Nama & catatan** opsional saat order lewat keranjang.
 - Responsif: desktop / tablet / mobile (drawer menu di layar kecil).
 - Tema kuning-biru khas design system Mandalika.
 
@@ -106,6 +107,8 @@ Untuk regenerate placeholder: `python3 make_images.py`
 - 19 gambar termuat (semua HTTP 200, tidak ada yang broken).
 - 14 pemeriksaan **kontras warna lolos WCAG AA** (terendah 4.5:1).
 - Alur keranjang diuji otomatis: tambah, kurangi, total, generator pesan WA — semua benar.
+- **Order 1 klik diuji di LIVE**: klik tombol pada kartu langsung menghasilkan link `wa.me` dengan
+  nama menu + harga; tap di mobile (viewport 390px) juga membuka WhatsApp.
 - Font DM Sans terkonfirmasi aktif (`document.fonts.check`).
 
 ## Catatan sebelum online

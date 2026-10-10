@@ -145,6 +145,21 @@
   var query = '';
 
   /* --- Render kartu menu -------------------------------------------------- */
+  function waLink(text) {
+    return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
+  }
+
+  // Pesan "pesan 1x klik": langsung berisi menu + harga, pembeli tinggal kirim.
+  function quickOrderText(item) {
+    return 'Halo ' + STORE + ', saya mau pesan:\n' +
+      '- ' + item.name + ' (' + CURRENCY(item.price) + ')\n\n' +
+      'Boleh dikonfirmasi ketersediaannya? Terima kasih!';
+  }
+
+  function openWA(text) {
+    window.open(waLink(text), '_blank');
+  }
+
   function cardHtml(item) {
     var flag = item.flag
       ? '<span class="mcard__flag' + (item.hot ? ' mcard__flag--hot' : '') + '">' + item.flag + '</span>'
@@ -161,13 +176,17 @@
           '<h3 class="mcard__title">' + item.name + '</h3>' +
           '<p class="mcard__desc">' + item.desc + '</p>' +
           '<div class="mcard__price"><span class="mcard__price-now">' + CURRENCY(item.price) + '</span>' + was + '</div>' +
+          // Tombol order utama: 1 klik -> langsung WhatsApp
+          '<button class="btn btn--wa btn--block mcard__order" type="button" data-act="order">' +
+            '<i class="fab fa-whatsapp"></i> Order Sekarang</button>' +
+          // Kontrol qty (opsional, untuk pesan beberapa sekaligus)
           '<div class="mcard__foot">' +
             '<div class="qty">' +
               '<button class="qty__btn" type="button" data-act="dec" aria-label="Kurangi ' + item.name + '">&minus;</button>' +
               '<span class="qty__val" data-qty="' + item.id + '">0</span>' +
               '<button class="qty__btn" type="button" data-act="inc" aria-label="Tambah ' + item.name + '">+</button>' +
             '</div>' +
-            '<button class="btn btn--outline btn--sm" type="button" data-act="add" style="flex:1">Tambah</button>' +
+            '<button class="btn btn--outline btn--sm" type="button" data-act="add" style="flex:1">Tambah ke keranjang</button>' +
           '</div>' +
         '</div>' +
       '</article>';
@@ -256,10 +275,29 @@
     if (!card) return;
     var id = card.getAttribute('data-id');
     var act = btn.getAttribute('data-act');
+    // 1 klik -> langsung buka WhatsApp dengan pesan siap kirim
+    if (act === 'order') {
+      var item = MENU.filter(function (m) { return m.id === id; })[0];
+      if (item) { openWA(quickOrderText(item)); pulseOrder(btn); }
+      return;
+    }
     if (act === 'inc') addToCart(id, 1);
     if (act === 'dec') addToCart(id, -1);
-    if (act === 'add') addToCart(id, 1);
+    if (act === 'add') {
+      addToCart(id, 1);
+      // langsung arahkan ke keranjang supaya jelas langkah berikutnya
+      openSheet(true);
+      var fabEl = doc.getElementById('cart-fab');
+      if (fabEl) { fabEl.style.transform = 'translateY(-2px) scale(1.06)'; setTimeout(function () { fabEl.style.transform = ''; }, 220); }
+    }
   });
+
+  function pulseOrder(btn) {
+    btn.classList.add('is-done');
+    var html = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-check"></i> Membuka WhatsApp...';
+    setTimeout(function () { btn.classList.remove('is-done'); btn.innerHTML = html; }, 2200);
+  }
 
   /* --- Render isi keranjang ---------------------------------------------- */
   var cartBody = doc.getElementById('cart-body');
@@ -352,8 +390,7 @@
       lines.push('');
       lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
 
-      var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(lines.join('\n'));
-      window.open(url, '_blank');
+      window.open(waLink(lines.join('\n')), '_blank');
     });
   }
 
