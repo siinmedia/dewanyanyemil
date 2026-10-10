@@ -1,16 +1,15 @@
 /* ==========================================================================
-   DEWANYA NYEMIL — Interaksi
+   DEWANYA NYEMIL — Katalog & Order
    Vanilla JS, tanpa dependensi.
-   1. Header + tombol ke atas      4. Filter & pencarian menu
-   2. Drawer mobile                5. Keranjang → pesan WhatsApp
-   3. Reveal saat scroll           6. Render kartu menu
+   1. Render katalog         4. Popup order (jumlah + opsi)
+   2. Pencarian & kategori   5. Kirim ke WhatsApp
+   3. Header                 6. Toast
    ========================================================================== */
 (function () {
   'use strict';
 
   var doc = document;
   var root = doc.documentElement;
-  root.classList.add('js-reveal');
 
   /* ---------- Konfigurasi ---------- */
   // Nomor WhatsApp tujuan order (format internasional tanpa "+").
@@ -18,407 +17,481 @@
   var STORE = 'Dewanya Nyemil';
   var CURRENCY = function (n) { return 'Rp' + Number(n).toLocaleString('id-ID'); };
 
-  /* ---------- 1. Header + to-top ---------- */
-  var head = doc.querySelector('.site-head');
-  var topBtn = doc.querySelector('.to-top');
-  var onScroll = function () {
-    var y = window.scrollY;
-    if (head) head.classList.toggle('is-stuck', y > 8);
-    if (topBtn) topBtn.classList.toggle('is-show', y > 480);
-  };
-  onScroll();
-  window.addEventListener('scroll', onScroll, { passive: true });
-  if (topBtn) topBtn.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-
-  /* ---------- 2. Drawer mobile ---------- */
-  var toggle = doc.querySelector('.nav-toggle');
-  var drawer = doc.getElementById('menu-mobile');
-  if (toggle && drawer) {
-    var setDrawer = function (open) {
-      drawer.classList.toggle('is-open', open);
-      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      var icon = toggle.querySelector('i');
-      if (icon) icon.className = open ? 'fas fa-xmark' : 'fas fa-bars';
-    };
-    toggle.addEventListener('click', function () { setDrawer(!drawer.classList.contains('is-open')); });
-    drawer.addEventListener('click', function (e) { if (e.target.closest('a')) setDrawer(false); });
-  }
-
-  /* ---------- 3. Reveal ---------- */
-  var reveals = doc.querySelectorAll('.reveal');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
-      });
-    }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('is-in'); });
-  }
-
-  /* ==========================================================================
-     4-6. MENU, FILTER, DAN KERANJANG
-     ========================================================================== */
-
-  /* --- Data menu ---------------------------------------------------------
-     Ganti nama/harga/deskripsi di sini. `img` boleh URL gambar apa pun
-     (lokal di assets/img/ atau link). `flag` opsional: 'Best Seller' /
-     'Baru' / 'Pedas'. `hot: true` membuat badge jadi biru.               */
+  /* ---------- Data menu ---------------------------------------------------
+     `opts` = pilihan tambahan yang muncul di popup order. Tiap grup:
+       { key: id unik, label: judul, type: 'radio'|'check', required: bool,
+         choices: [{ id, label, add: tambahan harga (opsional) }] }
+     `img` boleh SVG lokal atau link foto.                                        */
   var MENU = [
     // -------- Dimsum --------
-    { id: 'dimsum-ayam',   name: 'Dimsum Ayam',            cat: 'Dimsum',  price: 15000, was: 18000, flag: 'Best Seller', hot: true,
+    { id: 'dimsum-ayam', name: 'Dimsum Ayam', cat: 'Dimsum', price: 15000, was: 18000, flag: 'Best Seller', hot: true,
       desc: 'Dimsum ayam lembut dengan topping wortel, dikukus fresh, disajikan dengan saus spesial.',
-      img: 'assets/img/dimsum-ayam.svg' },
-    { id: 'dimsum-udang',  name: 'Dimsum Udang',           cat: 'Dimsum',  price: 18000,
+      img: 'assets/img/dimsum-ayam.svg',
+      opts: [
+        { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
+          { id: 'isi4', label: 'Isi 4', add: 0 },
+          { id: 'isi6', label: 'Isi 6', add: 7000 },
+          { id: 'isi10', label: 'Isi 10', add: 18000 }
+        ]},
+        { key: 'saus', label: 'Saus tambahan', type: 'check', required: false, choices: [
+          { id: 'mentai', label: 'Saus mentai', add: 3000 },
+          { id: 'pedas', label: 'Saus pedas', add: 0 },
+          { id: 'keju', label: 'Saus keju', add: 3000 }
+        ]}
+      ]},
+    { id: 'dimsum-udang', name: 'Dimsum Udang', cat: 'Dimsum', price: 18000,
       desc: 'Dimsum isi udang utuh yang kenyal dan manis, aroma bawang putih yang menggoda.',
-      img: 'assets/img/dimsum-udang.svg' },
-    { id: 'dimsum-mentai', name: 'Dimsum Mentai',          cat: 'Dimsum',  price: 22000, flag: 'Favorit',
+      img: 'assets/img/dimsum-udang.svg',
+      opts: [
+        { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
+          { id: 'isi4', label: 'Isi 4', add: 0 },
+          { id: 'isi6', label: 'Isi 6', add: 9000 }
+        ]}
+      ]},
+    { id: 'dimsum-mentai', name: 'Dimsum Mentai', cat: 'Dimsum', price: 22000, flag: 'Favorit',
       desc: 'Dimsum ayam disiram saus mentai creamy, dibakar sebentar hingga wangi.',
       img: 'assets/img/dimsum-mentai.svg' },
-    { id: 'siomay',        name: 'Siomay Bandung',         cat: 'Dimsum',  price: 12000,
+    { id: 'siomay', name: 'Siomay Bandung', cat: 'Dimsum', price: 12000,
       desc: 'Siomay ikan tenggiri dengan bumbu kacang gurih, kecap, dan perasan jeruk limau.',
-      img: 'assets/img/siomay.svg' },
+      img: 'assets/img/siomay.svg',
+      opts: [
+        { key: 'level', label: 'Level bumbu kacang', type: 'radio', required: true, choices: [
+          { id: 'normal', label: 'Normal', add: 0 },
+          { id: 'pedas', label: 'Pedas', add: 0 }
+        ]}
+      ]},
 
     // -------- Mie Ayam --------
-    { id: 'mie-ayam',      name: 'Mie Ayam Original',      cat: 'Mie Ayam', price: 15000, flag: 'Best Seller', hot: true,
+    { id: 'mie-ayam', name: 'Mie Ayam Original', cat: 'Mie Ayam', price: 15000, flag: 'Best Seller', hot: true,
       desc: 'Mie kenyal dengan ayam kecap manis gurih, sawi segar, dan kuah kaldu bening.',
-      img: 'assets/img/mie-ayam.svg' },
-    { id: 'mie-ayam-bakso', name: 'Mie Ayam Bakso',        cat: 'Mie Ayam', price: 20000,
+      img: 'assets/img/mie-ayam.svg',
+      opts: [
+        { key: 'mie', label: 'Pilih mie', type: 'radio', required: true, choices: [
+          { id: 'kuning', label: 'Mie kuning', add: 0 },
+          { id: 'yamin', label: 'Mie yamin (manis)', add: 0 },
+          { id: 'bihun', label: 'Bihun', add: 0 }
+        ]},
+        { key: 'pedas', label: 'Sambal & level', type: 'check', required: false, choices: [
+          { id: 'sambal', label: 'Pakai sambal', add: 0 },
+          { id: 'kuah', label: 'Kuah dipisah', add: 0 },
+          { id: 'bawang', label: 'Bawang goreng ekstra', add: 2000 }
+        ]}
+      ]},
+    { id: 'mie-ayam-bakso', name: 'Mie Ayam Bakso', cat: 'Mie Ayam', price: 20000,
       desc: 'Mie ayam lengkap dengan 3 bakso sapi kenyal dan pangsit goreng renyah.',
-      img: 'assets/img/mie-ayam-bakso.svg' },
-    { id: 'mie-ayam-jumbo', name: 'Mie Ayam Jumbo',        cat: 'Mie Ayam', price: 25000, flag: 'Porsi Besar',
+      img: 'assets/img/mie-ayam-bakso.svg',
+      opts: [
+        { key: 'mie', label: 'Pilih mie', type: 'radio', required: true, choices: [
+          { id: 'kuning', label: 'Mie kuning', add: 0 },
+          { id: 'yamin', label: 'Mie yamin (manis)', add: 0 }
+        ]}
+      ]},
+    { id: 'mie-ayam-jumbo', name: 'Mie Ayam Jumbo', cat: 'Mie Ayam', price: 25000, flag: 'Porsi Besar',
       desc: 'Porsi jumbo untuk yang lapar berat: mie, ayam, bakso, pangsit, dan telur rebus.',
       img: 'assets/img/mie-ayam-jumbo.svg' },
-    { id: 'mie-yamin',     name: 'Mie Yamin Manis',        cat: 'Mie Ayam', price: 15000,
+    { id: 'mie-yamin', name: 'Mie Yamin Manis', cat: 'Mie Ayam', price: 15000,
       desc: 'Mie yamin kecap manis tanpa kuah, ayam gurih, dan taburan bawang goreng.',
       img: 'assets/img/mie-yamin.svg' },
 
     // -------- Kebab Berger --------
-    { id: 'kebab-ayam',    name: 'Kebab Ayam Berger',      cat: 'Kebab',   price: 17000, flag: 'Best Seller', hot: true,
+    { id: 'kebab-ayam', name: 'Kebab Ayam Berger', cat: 'Kebab', price: 17000, flag: 'Best Seller', hot: true,
       desc: 'Kebab ayam panggang dengan saus mayo, keju, dan sayuran segar dalam tortilla lembut.',
-      img: 'assets/img/kebab-ayam.svg' },
-    { id: 'kebab-sapi',    name: 'Kebab Sapi Berger',      cat: 'Kebab',   price: 22000,
+      img: 'assets/img/kebab-ayam.svg',
+      opts: [
+        { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
+          { id: 'l0', label: 'Tidak pedas', add: 0 },
+          { id: 'l1', label: 'Pedas sedang', add: 0 },
+          { id: 'l2', label: 'Pedas maksimal', add: 0 }
+        ]},
+        { key: 'extra', label: 'Tambahan', type: 'check', required: false, choices: [
+          { id: 'keju', label: 'Keju mozzarella ekstra', add: 5000 },
+          { id: 'telur', label: 'Telur', add: 3000 },
+          { id: 'saus', label: 'Saus ekstra', add: 2000 }
+        ]}
+      ]},
+    { id: 'kebab-sapi', name: 'Kebab Sapi Berger', cat: 'Kebab', price: 22000,
       desc: 'Daging sapi bumbu lada hitam, keju mozzarella, dan saus barbekyu spesial.',
-      img: 'assets/img/kebab-sapi.svg' },
-    { id: 'kebab-sosis',   name: 'Kebab Sosis Mozzarella', cat: 'Kebab',   price: 20000,
+      img: 'assets/img/kebab-sapi.svg',
+      opts: [
+        { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
+          { id: 'l0', label: 'Tidak pedas', add: 0 },
+          { id: 'l1', label: 'Pedas sedang', add: 0 },
+          { id: 'l2', label: 'Pedas maksimal', add: 0 }
+        ]}
+      ]},
+    { id: 'kebab-sosis', name: 'Kebab Sosis Mozzarella', cat: 'Kebab', price: 20000,
       desc: 'Sosis jumbo dan mozzarella meleleh, camilan favorit anak-anak.',
       img: 'assets/img/kebab-sosis.svg' },
-    { id: 'kebab-duo',     name: 'Kebab Duo Combo',        cat: 'Kebab',   price: 35000, was: 40000, flag: 'Combo',
+    { id: 'kebab-duo', name: 'Kebab Duo Combo', cat: 'Kebab', price: 35000, was: 40000, flag: 'Combo',
       desc: 'Dua kebab pilihan (ayam + sapi) dengan kentang goreng, cocok untuk berdua.',
       img: 'assets/img/kebab-duo.svg' },
 
     // -------- Seri Minuman --------
-    { id: 'es-teh',        name: 'Es Teh Jumbo',           cat: 'Minuman', price: 8000,
+    { id: 'es-teh', name: 'Es Teh Jumbo', cat: 'Minuman', price: 8000,
       desc: 'Teh tubruk segar dengan es batu, manisnya bisa request sesuai selera.',
-      img: 'assets/img/es-teh.svg' },
-    { id: 'lemon-tea',     name: 'Lemon Tea Segar',        cat: 'Minuman', price: 12000, flag: 'Segar',
+      img: 'assets/img/es-teh.svg',
+      opts: [
+        { key: 'manis', label: 'Tingkat manis', type: 'radio', required: true, choices: [
+          { id: 'normal', label: 'Normal', add: 0 },
+          { id: 'less', label: 'Kurang manis', add: 0 },
+          { id: 'no', label: 'Tanpa gula', add: 0 }
+        ]}
+      ]},
+    { id: 'lemon-tea', name: 'Lemon Tea Segar', cat: 'Minuman', price: 12000, flag: 'Segar',
       desc: 'Teh dingin dengan perasan lemon asli dan potongan lemon segar.',
-      img: 'assets/img/lemon-tea.svg' },
-    { id: 'matcha-latte',  name: 'Matcha Latte',           cat: 'Minuman', price: 18000,
+      img: 'assets/img/lemon-tea.svg',
+      opts: [
+        { key: 'es', label: 'Es', type: 'radio', required: true, choices: [
+          { id: 'normal', label: 'Es normal', add: 0 },
+          { id: 'less', label: 'Sedikit es', add: 0 },
+          { id: 'no', label: 'Tanpa es', add: 0 }
+        ]},
+        { key: 'manis', label: 'Tingkat manis', type: 'radio', required: true, choices: [
+          { id: 'normal', label: 'Normal', add: 0 },
+          { id: 'less', label: 'Kurang manis', add: 0 }
+        ]}
+      ]},
+    { id: 'matcha-latte', name: 'Matcha Latte', cat: 'Minuman', price: 18000,
       desc: 'Matcha premium dengan susu segar, creamy dan tidak terlalu manis.',
-      img: 'assets/img/matcha-latte.svg' },
-    { id: 'choco-ice',     name: 'Chocolate Ice',          cat: 'Minuman', price: 16000, flag: 'Favorit',
+      img: 'assets/img/matcha-latte.svg',
+      opts: [
+        { key: 'susu', label: 'Pilihan susu', type: 'radio', required: true, choices: [
+          { id: 'fresh', label: 'Susu segar', add: 0 },
+          { id: 'oat', label: 'Susu oat', add: 4000 }
+        ]}
+      ]},
+    { id: 'choco-ice', name: 'Chocolate Ice', cat: 'Minuman', price: 16000, flag: 'Favorit',
       desc: 'Cokelat kental dingin dengan whipped cream dan taburan cokelat serut.',
       img: 'assets/img/choco-ice.svg' },
-    { id: 'thai-tea',      name: 'Thai Tea Original',      cat: 'Minuman', price: 14000,
+    { id: 'thai-tea', name: 'Thai Tea Original', cat: 'Minuman', price: 14000,
       desc: 'Thai tea autentik, manis creamy dengan susu evaporasi.',
       img: 'assets/img/thai-tea.svg' },
-    { id: 'mango-yakult',  name: 'Mango Yakult',           cat: 'Minuman', price: 15000, flag: 'Baru',
+    { id: 'mango-yakult', name: 'Mango Yakult', cat: 'Minuman', price: 15000, flag: 'Baru',
       desc: 'Mangga segar dipadu yakult, asam manis menyegarkan.',
       img: 'assets/img/mango-yakult.svg' }
   ];
 
+  var CATS = ['Semua', 'Dimsum', 'Mie Ayam', 'Kebab', 'Minuman'];
   var CAT_META = {
-    'Semua':   { ico: 'fa-utensils' },
-    'Dimsum':  { ico: 'fa-bowl-food' },
-    'Mie Ayam':{ ico: 'fa-bowl-rice' },
-    'Kebab':   { ico: 'fa-drumstick-bite' },
-    'Minuman': { ico: 'fa-mug-hot' }
+    'Semua':   { ico: 'fa-utensils',        short: 'Semua' },
+    'Dimsum':  { ico: 'fa-bowl-food',       short: 'Dimsum' },
+    'Mie Ayam':{ ico: 'fa-bowl-rice',       short: 'Mie Ayam' },
+    'Kebab':   { ico: 'fa-drumstick-bite',  short: 'Kebab' },
+    'Minuman': { ico: 'fa-mug-hot',         short: 'Minuman' }
   };
 
-  var menuRoot = doc.getElementById('menu-grid');
-  if (!menuRoot) return;   // halaman ini tidak punya daftar menu
+  var grid = doc.getElementById('menu-grid');
+  if (!grid) return;
 
-  var cart = {};           // id -> qty
   var activeCat = 'Semua';
   var query = '';
 
-  /* --- Render kartu menu -------------------------------------------------- */
+  /* ---------- Util ---------- */
   function waLink(text) {
     return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text);
   }
+  function openWA(text) { window.open(waLink(text), '_blank'); }
+  function byId(id) { return MENU.filter(function (m) { return m.id === id; })[0]; }
+  function catIco(c) { return CAT_META[c] ? CAT_META[c].ico : 'fa-utensils'; }
 
-  // Pesan "pesan 1x klik": langsung berisi menu + harga, pembeli tinggal kirim.
-  function quickOrderText(item) {
-    return 'Halo ' + STORE + ', saya mau pesan:\n' +
-      '- ' + item.name + ' (' + CURRENCY(item.price) + ')\n\n' +
-      'Boleh dikonfirmasi ketersediaannya? Terima kasih!';
+  var toastEl = doc.getElementById('toast');
+  var toastTimer;
+  function toast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('is-show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove('is-show'); }, 2600);
   }
 
-  function openWA(text) {
-    window.open(waLink(text), '_blank');
-  }
-
+  /* ---------- 1. Render katalog ---------- */
   function cardHtml(item) {
     var flag = item.flag
       ? '<span class="mcard__flag' + (item.hot ? ' mcard__flag--hot' : '') + '">' + item.flag + '</span>'
       : '';
     var was = item.was ? '<span class="mcard__price-was">' + CURRENCY(item.was) + '</span>' : '';
     return '' +
-      '<article class="mcard reveal" data-id="' + item.id + '" data-cat="' + item.cat + '">' +
+      '<article class="mcard" data-id="' + item.id + '" data-cat="' + item.cat + '" tabindex="0" role="button" ' +
+              'aria-label="' + item.name + ', ' + CURRENCY(item.price) + '. Ketuk untuk pesan">' +
         '<div class="mcard__img">' +
-          '<img src="' + item.img + '" alt="' + item.name + '" loading="lazy" width="600" height="450">' +
-          '<span class="mcard__cat"><i class="fas ' + (CAT_META[item.cat] ? CAT_META[item.cat].ico : 'fa-utensils') + '"></i> ' + item.cat + '</span>' +
+          '<img src="' + item.img + '" alt="' + item.name + '" loading="lazy" decoding="async" width="600" height="450">' +
+          '<span class="mcard__cat"><i class="fas ' + catIco(item.cat) + '"></i> ' + item.cat + '</span>' +
           flag +
         '</div>' +
         '<div class="mcard__body">' +
           '<h3 class="mcard__title">' + item.name + '</h3>' +
           '<p class="mcard__desc">' + item.desc + '</p>' +
-          '<div class="mcard__price"><span class="mcard__price-now">' + CURRENCY(item.price) + '</span>' + was + '</div>' +
-          // Tombol order utama: 1 klik -> langsung WhatsApp
-          '<button class="btn btn--wa btn--block mcard__order" type="button" data-act="order">' +
-            '<i class="fab fa-whatsapp"></i> Order Sekarang</button>' +
-          // Kontrol qty (opsional, untuk pesan beberapa sekaligus)
           '<div class="mcard__foot">' +
-            '<div class="qty">' +
-              '<button class="qty__btn" type="button" data-act="dec" aria-label="Kurangi ' + item.name + '">&minus;</button>' +
-              '<span class="qty__val" data-qty="' + item.id + '">0</span>' +
-              '<button class="qty__btn" type="button" data-act="inc" aria-label="Tambah ' + item.name + '">+</button>' +
-            '</div>' +
-            '<button class="btn btn--outline btn--sm" type="button" data-act="add" style="flex:1">Tambah ke keranjang</button>' +
+            '<div class="mcard__price"><span class="mcard__price-now">' + CURRENCY(item.price) + '</span>' + was + '</div>' +
+            '<span class="mcard__cta"><i class="fas fa-plus" aria-hidden="true"></i> Pilih</span>' +
           '</div>' +
         '</div>' +
       '</article>';
   }
 
-  function renderMenu() {
+  function render() {
+    var q = query.trim().toLowerCase();
     var list = MENU.filter(function (m) {
       var okCat = activeCat === 'Semua' || m.cat === activeCat;
-      var q = query.trim().toLowerCase();
       var okQ = !q || m.name.toLowerCase().indexOf(q) > -1 || m.desc.toLowerCase().indexOf(q) > -1;
       return okCat && okQ;
     });
 
     if (!list.length) {
-      menuRoot.innerHTML = '<p class="pill-note" style="grid-column:1/-1"><i class="fas fa-circle-info"></i> Menu tidak ditemukan. Coba kata kunci lain.</p>';
+      grid.innerHTML = '<div class="empty">' +
+        '<i class="fas fa-face-frown" aria-hidden="true"></i>' +
+        '<p>Jajanan tidak ditemukan.<br>Coba kata kunci atau kategori lain.</p></div>';
       return;
     }
-    menuRoot.innerHTML = list.map(cardHtml).join('');
-    syncQtyLabels();
-    // reveal kartu baru
-    requestAnimationFrame(function () {
-      menuRoot.querySelectorAll('.reveal').forEach(function (el, i) {
-        setTimeout(function () { el.classList.add('is-in'); }, Math.min(i * 40, 320));
-      });
-    });
+    grid.innerHTML = list.map(cardHtml).join('');
   }
 
-  /* --- Chip kategori ------------------------------------------------------ */
+  /* ---------- 2. Chip kategori ---------- */
   var chipBar = doc.getElementById('menu-chips');
   if (chipBar) {
-    var cats = ['Semua', 'Dimsum', 'Mie Ayam', 'Kebab', 'Minuman'];
-    chipBar.innerHTML = cats.map(function (c) {
-      var ico = CAT_META[c] ? CAT_META[c].ico : 'fa-utensils';
-      return '<button class="chip' + (c === 'Semua' ? ' is-active' : '') + '" type="button" data-cat="' + c + '">' +
-             '<i class="fas ' + ico + ' chip__ico"></i> ' + c + '</button>';
+    chipBar.innerHTML = CATS.map(function (c) {
+      var meta = CAT_META[c] || { ico: 'fa-utensils', short: c };
+      var n = c === 'Semua' ? MENU.length : MENU.filter(function (m) { return m.cat === c; }).length;
+      return '<button class="chip' + (c === 'Semua' ? ' is-active' : '') + '" type="button" role="tab" ' +
+             'aria-selected="' + (c === 'Semua') + '" data-cat="' + c + '">' +
+             '<i class="fas ' + meta.ico + ' chip__ico"></i> ' + meta.short +
+             '<span class="chip__n">' + n + '</span></button>';
     }).join('');
+
     chipBar.addEventListener('click', function (e) {
       var b = e.target.closest('.chip');
       if (!b) return;
-      activeCat = b.getAttribute('data-cat');
-      chipBar.querySelectorAll('.chip').forEach(function (c) { c.classList.toggle('is-active', c === b); });
-      renderMenu();
+      setCat(b.getAttribute('data-cat'));
     });
   }
 
-  /* --- Pencarian ---------------------------------------------------------- */
+  function setCat(cat) {
+    activeCat = cat;
+    if (chipBar) {
+      chipBar.querySelectorAll('.chip').forEach(function (c) {
+        var on = c.getAttribute('data-cat') === cat;
+        c.classList.toggle('is-active', on);
+        c.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      // pastikan chip aktif terlihat di layar (scroll horizontal di HP)
+      var act = chipBar.querySelector('.chip.is-active');
+      if (act && act.scrollIntoView) {
+        try { act.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (err) {}
+      }
+    }
+    render();
+  }
+
+  /* ---------- 3. Pencarian ---------- */
   var searchInput = doc.getElementById('menu-search');
+  var searchClear = doc.getElementById('search-clear');
   if (searchInput) {
-    searchInput.addEventListener('input', function () { query = searchInput.value; renderMenu(); });
+    searchInput.addEventListener('input', function () {
+      query = searchInput.value;
+      if (searchClear) searchClear.hidden = !query;
+      render();
+    });
   }
-
-  /* --- Keranjang ---------------------------------------------------------- */
-  function syncQtyLabels() {
-    MENU.forEach(function (m) {
-      var el = menuRoot.querySelector('[data-qty="' + m.id + '"]');
-      if (el) el.textContent = cart[m.id] || 0;
+  if (searchClear) {
+    searchClear.addEventListener('click', function () {
+      searchInput.value = ''; query = ''; searchClear.hidden = true;
+      searchInput.focus(); render();
     });
   }
 
-  function cartCount() {
-    return Object.keys(cart).reduce(function (s, k) { return s + cart[k]; }, 0);
-  }
-  function cartTotal() {
-    return Object.keys(cart).reduce(function (s, k) {
-      var item = MENU.filter(function (m) { return m.id === k; })[0];
-      return s + (item ? item.price * cart[k] : 0);
-    }, 0);
+  /* ---------- 4. Popup order ---------- */
+  var sheet = doc.getElementById('order-sheet');
+  var state = { item: null, qty: 1, choices: {} };
+
+  function openSheet(item) {
+    state.item = item;
+    state.qty = 1;
+    state.choices = {};
+
+    doc.getElementById('order-img').src = item.img;
+    doc.getElementById('order-img').alt = item.name;
+    doc.getElementById('order-cat').textContent = item.cat;
+    doc.getElementById('order-title').textContent = item.name;
+    doc.getElementById('order-desc').textContent = item.desc;
+    doc.getElementById('order-price').textContent = CURRENCY(item.price);
+    var wasEl = doc.getElementById('order-was');
+    wasEl.textContent = item.was ? CURRENCY(item.was) : '';
+    wasEl.hidden = !item.was;
+    doc.getElementById('order-qty').textContent = '1';
+    doc.getElementById('order-name').value = '';
+    doc.getElementById('order-note').value = '';
+
+    // bangun opsi
+    var wrap = doc.getElementById('opt-groups');
+    if (item.opts && item.opts.length) {
+      wrap.innerHTML = item.opts.map(function (g) {
+        var required = !!g.required;
+        var choicesHtml = g.choices.map(function (ch) {
+          var inputType = g.type === 'check' ? 'checkbox' : 'radio';
+          var add = ch.add ? '<span class="choice__add">+' + CURRENCY(ch.add).replace('Rp', 'Rp ') + '</span>' : '';
+          return '<label class="choice">' +
+            '<input type="' + inputType + '" name="opt-' + g.key + '" value="' + ch.id + '"' +
+              ' data-add="' + (ch.add || 0) + '"' +
+              (g.type === 'radio' && g.choices[0] && ch.id === g.choices[0].id ? ' checked' : '') + '>' +
+            '<span class="choice__box"><i class="fas fa-check" aria-hidden="true"></i></span>' +
+            '<span class="choice__label">' + ch.label + '</span>' + add +
+          '</label>';
+        }).join('');
+        return '<fieldset class="opt-group">' +
+          '<legend class="opt-group__label">' + g.label +
+            (required ? ' <span class="req">wajib</span>' : ' <span>(opsional)</span>') + '</legend>' +
+          '<div class="choices choices--' + g.type + '">' + choicesHtml + '</div>' +
+        '</fieldset>';
+      }).join('');
+
+      // radio pertama otomatis terpilih -> catat di state
+      item.opts.forEach(function (g) {
+        if (g.type === 'radio') state.choices[g.key] = [g.choices[0].id];
+        else state.choices[g.key] = [];
+      });
+      wrap.hidden = false;
+    } else {
+      wrap.innerHTML = '';
+      wrap.hidden = true;
+    }
+
+    updateTotal();
+    sheet.classList.add('is-open');
+    sheet.setAttribute('aria-hidden', 'false');
+    doc.body.style.overflow = 'hidden';
+    var sc = sheet.querySelector('.sheet__scroll');
+    if (sc) sc.scrollTop = 0;
   }
 
-  function addToCart(id, delta) {
-    cart[id] = Math.max(0, (cart[id] || 0) + delta);
-    if (!cart[id]) delete cart[id];
-    syncQtyLabels();
-    renderCart();
-    var fab = doc.getElementById('cart-fab');
-    if (fab && delta > 0) {
-      fab.style.transform = 'translateY(-2px) scale(1.04)';
-      setTimeout(function () { fab.style.transform = ''; }, 180);
-    }
+  function closeSheet() {
+    sheet.classList.remove('is-open');
+    sheet.setAttribute('aria-hidden', 'true');
+    doc.body.style.overflow = '';
   }
 
-  menuRoot.addEventListener('click', function (e) {
-    var btn = e.target.closest('[data-act]');
-    if (!btn) return;
-    var card = e.target.closest('.mcard');
-    if (!card) return;
-    var id = card.getAttribute('data-id');
-    var act = btn.getAttribute('data-act');
-    // 1 klik -> langsung buka WhatsApp dengan pesan siap kirim
-    if (act === 'order') {
-      var item = MENU.filter(function (m) { return m.id === id; })[0];
-      if (item) { openWA(quickOrderText(item)); pulseOrder(btn); }
-      return;
+  // pilihan berubah
+  doc.getElementById('opt-groups').addEventListener('change', function (e) {
+    var input = e.target;
+    if (input.tagName !== 'INPUT') return;
+    var key = input.name.replace('opt-', '');
+    if (input.type === 'radio') {
+      state.choices[key] = [input.value];
+    } else {
+      var arr = state.choices[key] || [];
+      var idx = arr.indexOf(input.value);
+      if (input.checked && idx === -1) arr.push(input.value);
+      if (!input.checked && idx > -1) arr.splice(idx, 1);
+      state.choices[key] = arr;
     }
-    if (act === 'inc') addToCart(id, 1);
-    if (act === 'dec') addToCart(id, -1);
-    if (act === 'add') {
-      addToCart(id, 1);
-      // langsung arahkan ke keranjang supaya jelas langkah berikutnya
-      openSheet(true);
-      var fabEl = doc.getElementById('cart-fab');
-      if (fabEl) { fabEl.style.transform = 'translateY(-2px) scale(1.06)'; setTimeout(function () { fabEl.style.transform = ''; }, 220); }
-    }
+    updateTotal();
   });
 
-  function pulseOrder(btn) {
-    btn.classList.add('is-done');
-    var html = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> Membuka WhatsApp...';
-    setTimeout(function () { btn.classList.remove('is-done'); btn.innerHTML = html; }, 2200);
-  }
-
-  /* --- Render isi keranjang ---------------------------------------------- */
-  var cartBody = doc.getElementById('cart-body');
-  var cartFoot = doc.getElementById('cart-foot');
-  var fabCount = doc.getElementById('cart-count');
-
-  function renderCart() {
-    var count = cartCount();
-    if (fabCount) {
-      fabCount.textContent = count;
-      fabCount.setAttribute('data-empty', count === 0 ? 'true' : 'false');
-    }
-    if (!cartBody) return;
-
-    if (!count) {
-      cartBody.innerHTML = '<div class="cart-empty"><div class="cart-empty__ico"><i class="fas fa-basket-shopping"></i></div>' +
-        '<p>Keranjangmu masih kosong.<br>Pilih menu favoritmu dulu ya.</p></div>';
-      if (cartFoot) cartFoot.style.display = 'none';
+  // jumlah
+  sheet.addEventListener('click', function (e) {
+    var q = e.target.closest('[data-qty]');
+    if (q) {
+      state.qty = Math.max(1, state.qty + (q.getAttribute('data-qty') === 'inc' ? 1 : -1));
+      doc.getElementById('order-qty').textContent = state.qty;
+      updateTotal();
       return;
     }
-    if (cartFoot) cartFoot.style.display = '';
+    if (e.target.closest('[data-close]')) closeSheet();
+  });
 
-    var rows = Object.keys(cart).map(function (id) {
-      var item = MENU.filter(function (m) { return m.id === id; })[0];
-      if (!item) return '';
-      return '<div class="citem">' +
-        '<img class="citem__img" src="' + item.img + '" alt="' + item.name + '">' +
-        '<div class="citem__info">' +
-          '<div class="citem__name">' + item.name + '</div>' +
-          '<div class="citem__price">' + CURRENCY(item.price) + ' &times; ' + cart[id] + '</div>' +
-        '</div>' +
-        '<div class="qty">' +
-          '<button class="qty__btn" type="button" data-cart-act="dec" data-id="' + id + '" aria-label="Kurangi">&minus;</button>' +
-          '<span class="qty__val">' + cart[id] + '</span>' +
-          '<button class="qty__btn" type="button" data-cart-act="inc" data-id="' + id + '" aria-label="Tambah">+</button>' +
-        '</div>' +
-        '<div class="citem__sub">' + CURRENCY(item.price * cart[id]) + '</div>' +
-      '</div>';
-    }).join('');
-    cartBody.innerHTML = rows;
+  doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeSheet(); });
 
-    var totalEl = doc.getElementById('cart-total-val');
-    if (totalEl) totalEl.textContent = CURRENCY(cartTotal());
-  }
-
-  if (cartBody) {
-    cartBody.addEventListener('click', function (e) {
-      var b = e.target.closest('[data-cart-act]');
-      if (!b) return;
-      var id = b.getAttribute('data-id');
-      addToCart(id, b.getAttribute('data-cart-act') === 'inc' ? 1 : -1);
-    });
-  }
-
-  /* --- Buka/tutup sheet keranjang ---------------------------------------- */
-  var sheet = doc.getElementById('cart-sheet');
-  var fab = doc.getElementById('cart-fab');
-  var openSheet = function (open) {
-    if (!sheet) return;
-    sheet.classList.toggle('is-open', open);
-    doc.body.style.overflow = open ? 'hidden' : '';
-  };
-  if (fab) fab.addEventListener('click', function () { openSheet(true); });
-  if (sheet) {
-    sheet.addEventListener('click', function (e) {
-      if (e.target.closest('[data-close]')) openSheet(false);
-    });
-    doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') openSheet(false); });
-  }
-
-  /* --- Kirim pesanan ke WhatsApp ----------------------------------------- */
-  var waBtn = doc.getElementById('cart-wa');
-  if (waBtn) {
-    waBtn.addEventListener('click', function () {
-      if (!cartCount()) return;
-      var nameEl = doc.getElementById('cust-name');
-      var noteEl = doc.getElementById('cust-note');
-      var name = nameEl && nameEl.value.trim();
-      var note = noteEl && noteEl.value.trim();
-
-      var lines = ['Halo ' + STORE + ', saya mau pesan:', ''];
-      Object.keys(cart).forEach(function (id) {
-        var item = MENU.filter(function (m) { return m.id === id; })[0];
-        if (item) lines.push('- ' + item.name + ' x' + cart[id] + ' = ' + CURRENCY(item.price * cart[id]));
+  // hitung tambahan dari opsi terpilih
+  function extraTotal() {
+    var item = state.item;
+    if (!item || !item.opts) return 0;
+    var extra = 0;
+    item.opts.forEach(function (g) {
+      var picked = state.choices[g.key] || [];
+      g.choices.forEach(function (ch) {
+        if (picked.indexOf(ch.id) > -1 && ch.add) extra += ch.add;
       });
-      lines.push('');
-      lines.push('Total: ' + CURRENCY(cartTotal()));
-      if (name) lines.push('Nama: ' + name);
-      if (note) lines.push('Catatan: ' + note);
-      lines.push('');
-      lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
-
-      window.open(waLink(lines.join('\n')), '_blank');
     });
+    return extra;
   }
 
-  /* --- Tombol "Pesan" pada kartu (kalau ada) ----------------------------- */
+  function unitPrice() { return (state.item ? state.item.price : 0) + extraTotal(); }
+
+  function updateTotal() {
+    doc.getElementById('order-total').textContent = CURRENCY(unitPrice() * state.qty);
+  }
+
+  /* ---------- 5. Kirim ke WhatsApp ---------- */
+  doc.getElementById('order-submit').addEventListener('click', function () {
+    var item = state.item;
+    if (!item) return;
+
+    var lines = ['Halo ' + STORE + ', saya mau pesan:', ''];
+    lines.push('- ' + item.name + ' x' + state.qty);
+
+    // rincian opsi terpilih
+    if (item.opts) {
+      item.opts.forEach(function (g) {
+        var picked = state.choices[g.key] || [];
+        if (!picked.length) return;
+        var labels = g.choices
+          .filter(function (ch) { return picked.indexOf(ch.id) > -1; })
+          .map(function (ch) { return ch.label; });
+        lines.push('    ' + g.label + ': ' + labels.join(', '));
+      });
+    }
+
+    lines.push('    Subtotal: ' + CURRENCY(unitPrice() * state.qty));
+    lines.push('');
+    lines.push('Total: ' + CURRENCY(unitPrice() * state.qty));
+
+    var name = doc.getElementById('order-name').value.trim();
+    var note = doc.getElementById('order-note').value.trim();
+    if (name) lines.push('Nama: ' + name);
+    if (note) lines.push('Catatan: ' + note);
+    lines.push('');
+    lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
+
+    openWA(lines.join('\n'));
+    closeSheet();
+    toast('Pesanan dibuka di WhatsApp. Tekan kirim untuk menyelesaikan.');
+  });
+
+  /* -- Ketuk kartu -> buka popup -- */
+  grid.addEventListener('click', function (e) {
+    var card = e.target.closest('.mcard');
+    if (card) openSheet(byId(card.getAttribute('data-id')));
+  });
+  grid.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var card = e.target.closest('.mcard');
+    if (card) { e.preventDefault(); openSheet(byId(card.getAttribute('data-id'))); }
+  });
+
+  /* -- Tombol "Chat" di header & footer: WA umum -- */
   doc.querySelectorAll('[data-order-now]').forEach(function (el) {
     el.addEventListener('click', function (e) {
       e.preventDefault();
-      var url = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent('Halo ' + STORE + ', saya mau pesan. Boleh info menu & ongkirnya?');
-      window.open(url, '_blank');
+      openWA('Halo ' + STORE + ', saya mau pesan. Boleh info menu & ongkirnya?');
     });
   });
 
-  /* --- Kartu kategori: lompat ke menu + filter kategori ------------------ */
+  /* -- Lompat ke kategori dari footer -- */
   doc.querySelectorAll('[data-jump]').forEach(function (el) {
-    el.addEventListener('click', function () {
-      var cat = el.getAttribute('data-jump');
-      activeCat = cat;
-      if (chipBar) {
-        chipBar.querySelectorAll('.chip').forEach(function (c) {
-          c.classList.toggle('is-active', c.getAttribute('data-cat') === cat);
-        });
-      }
-      if (searchInput) { searchInput.value = ''; query = ''; }
-      renderMenu();
+    el.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (searchInput) { searchInput.value = ''; query = ''; if (searchClear) searchClear.hidden = true; }
+      setCat(el.getAttribute('data-jump'));
+      var bar = doc.getElementById('menu-bar');
+      if (bar) window.scrollTo({ top: bar.offsetTop - 4, behavior: 'smooth' });
     });
   });
 
-  /* --- Inisialisasi ------------------------------------------------------ */
-  renderMenu();
-  renderCart();
+  /* ---------- 6. Header shadow saat scroll ---------- */
+  var head = doc.querySelector('.site-head');
+  var onScroll = function () { if (head) head.classList.toggle('is-stuck', window.scrollY > 8); };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* ---------- Inisialisasi ---------- */
+  render();
 })();

@@ -53,23 +53,37 @@ Nomor juga tampil di footer `index.html` (bagian Kontak) — ubah manual agar ko
 <li><span><i class="fab fa-whatsapp"></i> +62 852-2561-7090</span></li>
 ```
 
-### 2. Menu, harga, dan deskripsi
+### 2. Menu, harga, opsi, dan deskripsi
 
 Semua ada di array `MENU` pada `assets/app.js`. Tiap item:
 
 ```js
-{ id: 'dimsum-ayam',            // unik, dipakai keranjang
+{ id: 'dimsum-ayam',            // unik, dipakai saat order
   name: 'Dimsum Ayam',
-  cat: 'Dimsum',                // harus salah satu: Dimsum | Mie Ayam | Kebab | Minuman
-  price: 15000,                 // harga normal (angka, tanpa titik)
+  cat: 'Dimsum',                // Dimsum | Mie Ayam | Kebab | Minuman
+  price: 15000,                 // harga dasar (angka, tanpa titik)
   was: 18000,                   // opsional: harga coret
-  flag: 'Best Seller',          // opsional: badge di sudut kanan atas
+  flag: 'Best Seller',          // opsional: badge sudut kanan atas
   hot: true,                    // opsional: badge jadi biru (bukan kuning)
   desc: 'Deskripsi singkat...',
-  img: 'assets/img/dimsum-ayam.svg' }
+  img: 'assets/img/dimsum-ayam.svg',
+  opts: [                       // opsional: pilihan di popup order
+    { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
+      { id: 'isi4',  label: 'Isi 4',  add: 0 },
+      { id: 'isi6',  label: 'Isi 6',  add: 7000 },   // add = tambahan harga
+      { id: 'isi10', label: 'Isi 10', add: 18000 }
+    ]},
+    { key: 'saus', label: 'Saus tambahan', type: 'check', required: false, choices: [
+      { id: 'mentai', label: 'Saus mentai', add: 3000 }
+    ]}
+  ]}
 ```
 
-Harga contoh sudah diisi wajar — **silakan koreksi** sesuai daftar harga asli.
+- `type: 'radio'` = pilih satu (pilihan pertama otomatis terpilih).
+- `type: 'check'` = boleh pilih beberapa (tampil 2 kolom).
+- `add` menambah harga satuan sebelum dikali jumlah.
+
+Harga contoh sudah diisi wajar - **silakan koreksi** sesuai daftar harga asli.
 
 ### 3. Menambah kategori baru
 
@@ -92,23 +106,27 @@ Untuk regenerate placeholder: `python3 make_images.py`
 
 ## Fitur
 
-- **Order sekali klik**: tombol **Order Sekarang** di tiap kartu langsung membuka WhatsApp dengan
-  pesan siap kirim (`Halo Dewanya Nyemil, saya mau pesan: - Nama Menu (Rp…)`). Pembeli tinggal tekan kirim.
-- **Pesan beberapa sekaligus** (opsional): **Tambah ke keranjang** -> panel keranjang terbuka otomatis,
-  jumlah diatur dengan tombol −/+, total dihitung otomatis, lalu kirim sebagai satu pesanan.
-- **Filter kategori** (chip) + **pencarian** menu real-time.
-- **Nama & catatan** opsional saat order lewat keranjang.
-- Responsif: desktop / tablet / mobile (drawer menu di layar kecil).
-- Tema kuning-biru khas design system Mandalika.
+- **Langsung katalog**: tanpa hero. Begitu dibuka, chip kategori + kartu jajanan sudah terlihat
+  di layar pertama, termasuk di HP.
+- **Ketuk kartu -> popup order**: pilih jumlah, opsi (porsi, level pedas, pilihan mie, tingkat manis,
+  susu, dll), isi nama & catatan opsional. Total dihitung otomatis termasuk tambahan harga opsi.
+- **Kirim ke WhatsApp**: pesan tersusun rapi (menu, opsi terpilih, subtotal, total, nama, catatan),
+  lalu dibuka di `wa.me` - pembeli tinggal tekan kirim. Ada notifikasi kecil setelah terkirim.
+- **Pencarian + chip kategori** yang menempel (sticky) saat scroll, chip bisa digeser horizontal di HP.
+- **Mobile-first**: target sentuh minimal 44px, input 16px (tidak memicu auto-zoom iOS),
+  popup bottom-sheet dengan `safe-area-inset`, dan tema kuning-biru khas design system Mandalika.
 
 ## Verifikasi yang sudah dilakukan
 
 - 3 viewport (1440 / 768 / 390) × halaman: **0 error console**, **0 horizontal overflow**.
 - 19 gambar termuat (semua HTTP 200, tidak ada yang broken).
 - 14 pemeriksaan **kontras warna lolos WCAG AA** (terendah 4.5:1).
-- Alur keranjang diuji otomatis: tambah, kurangi, total, generator pesan WA — semua benar.
-- **Order 1 klik diuji di LIVE**: klik tombol pada kartu langsung menghasilkan link `wa.me` dengan
-  nama menu + harga; tap di mobile (viewport 390px) juga membuka WhatsApp.
+- Alur order diuji otomatis: ketuk kartu -> popup -> ubah opsi -> naikkan jumlah -> total berubah
+  -> kirim ke WA dengan pesan lengkap. Semua benar di desktop, tablet, dan mobile.
+- **Order diuji di LIVE** pada viewport HP (390px): kartu terlihat tanpa scroll, tap membuka popup,
+  opsi & jumlah mengubah total, link `wa.me` benar.
+- **Ergonomi mobile diperiksa**: semua target sentuh >= 44px (kartu, chip, tombol Chat, tombol −/+, tutup),
+  input 16px sehingga iOS tidak auto-zoom, popup tidak menjulur keluar layar, chip bisa digeser.
 - Font DM Sans terkonfirmasi aktif (`document.fonts.check`).
 
 ## Catatan sebelum online
