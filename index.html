@@ -27,7 +27,7 @@
     <meta name="theme-color" content="#D92727">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/style.css?v=dn006">
+    <link rel="stylesheet" href="assets/style.css?v=dn007">
 </head>
 
 <body class="page-order">
@@ -161,6 +161,7 @@
                 <h2 class="order-title" id="order-title"></h2>
                 <p class="order-desc" id="order-desc"></p>
                 <div class="order-price">
+                    <span class="order-price__from" id="order-from" hidden></span>
                     <span class="order-price__now" id="order-price"></span>
                     <span class="order-price__was" id="order-was"></span>
                 </div>
@@ -252,7 +253,7 @@
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
     <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-    <script src="assets/app.js?v=dn006"></script>
+    <script src="assets/app.js?v=dn007"></script>
 </body>
 
 </html>

@@ -16,24 +16,27 @@ RED = "#D92727"; GOLD = "#FFC928"; CREAM = "#FFF8E8"; CREAM2 = "#FDF1DC"
 INK = "#292522"; LINE = "#E8DFCE"
 
 ITEMS = {
-    "dimsum-ayam":     ("Dimsum Ayam",     "🥟", CREAM),
-    "dimsum-udang":    ("Dimsum Udang",    "🥟", CREAM2),
-    "dimsum-mentai":   ("Dimsum Mentai",   "🍥", CREAM),
-    "siomay":          ("Siomay Bandung",  "🥟", CREAM2),
-    "mie-ayam":        ("Mie Ayam",        "🍜", CREAM),
-    "mie-ayam-bakso":  ("Mie Ayam Bakso",  "🍜", CREAM2),
-    "mie-ayam-jumbo":  ("Mie Ayam Jumbo",  "🍜", CREAM),
-    "mie-yamin":       ("Mie Yamin",       "🍝", CREAM2),
-    "kebab-ayam":      ("Kebab Ayam",      "🌯", CREAM),
-    "kebab-sapi":      ("Kebab Sapi",      "🌯", CREAM2),
-    "kebab-sosis":     ("Kebab Sosis",     "🌭", CREAM),
-    "kebab-duo":       ("Kebab Duo",       "🌯", CREAM2),
-    "es-teh":          ("Es Teh Jumbo",    "🧋", CREAM),
-    "lemon-tea":       ("Lemon Tea",       "🍋", CREAM2),
-    "matcha-latte":    ("Matcha Latte",    "🍵", CREAM),
-    "choco-ice":       ("Chocolate Ice",   "🍫", CREAM2),
-    "thai-tea":        ("Thai Tea",        "🧋", CREAM),
-    "mango-yakult":    ("Mango Yakult",    "🥭", CREAM2),
+    # Kebab & Burger
+    "kebab":              ("Kebab",                "\U0001F32F", CREAM),
+    "burger-biasa":       ("Burger Biasa",         "\U0001F354", CREAM2),
+    "burger-beef":        ("Burger Beef Patties",  "\U0001F354", CREAM),
+    "mac-cheese-kecil":   ("Mac & Cheese",         "\U0001F35D", CREAM2),
+    "mac-cheese-beef":    ("Mac & Cheese Beef",    "\U0001F35D", CREAM),
+    "spaghetti-bolognese":("Spaghetti Bolognese",  "\U0001F35D", CREAM2),
+    # Sosis
+    "sosis-chili-oil":    ("Sosis Chili Oil",      "\U0001F32D", CREAM),
+    "sosis-bumbu":        ("Sosis Bumbu Tabur",    "\U0001F32D", CREAM2),
+    # Cireng & Basreng
+    "basreng-chili-oil":  ("Basreng Chili Oil",    "\U0001F95F", CREAM),
+    "cireng-chili-oil":   ("Cireng Chili Oil",     "\U0001F95F", CREAM2),
+    "cireng-kuah-keju":   ("Cireng Kuah Keju",     "\U0001F9C0", CREAM),
+    # Dimsum
+    "dimsum":             ("Dimsum",               "\U0001F95F", CREAM2),
+    "dimsum-kuah-keju":   ("Dimsum Kuah Keju",     "\U0001F95F", CREAM),
+    # Minuman
+    "es-ubi-ungu":        ("Es Ubi Ungu",          "\U0001F360", CREAM2),
+    "es-ubi-ungu-keju":   ("Es Ubi Ungu Keju",     "\U0001F360", CREAM),
+    "es-cendol-kecebong": ("Es Cendol Kecebong",   "\U0001F375", CREAM2),
 }
 
 TPL = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="600" height="450" role="img" aria-label="{label}">
@@ -57,7 +60,8 @@ TPL = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="60
 
 for slug, (label, glyph, bg) in ITEMS.items():
     bg2 = CREAM if bg == CREAM2 else CREAM2
-    svg = TPL.format(label=label, glyph=glyph, bg=bg, bg2=bg2,
+    lab = label.replace("&", "&amp;")
+    svg = TPL.format(label=lab, glyph=glyph, bg=bg, bg2=bg2,
                      red=RED, gold=GOLD, line=LINE, ink=INK)
     with open(os.path.join(OUT, slug + ".svg"), "w", encoding="utf-8") as f:
         f.write(svg)

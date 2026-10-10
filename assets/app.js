@@ -23,80 +23,10 @@
          choices: [{ id, label, add: tambahan harga (opsional) }] }
      `img` boleh SVG lokal atau link foto.                                        */
   var MENU = [
-    // -------- Dimsum --------
-    { id: 'dimsum-ayam', name: 'Dimsum Ayam', cat: 'Dimsum', price: 15000, was: 18000, flag: 'Best Seller', hot: true,
-      desc: 'Dimsum ayam lembut dengan topping wortel, dikukus fresh, disajikan dengan saus spesial.',
-      img: 'assets/img/dimsum-ayam.svg',
-      opts: [
-        { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
-          { id: 'isi4', label: 'Isi 4', add: 0 },
-          { id: 'isi6', label: 'Isi 6', add: 7000 },
-          { id: 'isi10', label: 'Isi 10', add: 18000 }
-        ]},
-        { key: 'saus', label: 'Saus tambahan', type: 'check', required: false, choices: [
-          { id: 'mentai', label: 'Saus mentai', add: 3000 },
-          { id: 'pedas', label: 'Saus pedas', add: 0 },
-          { id: 'keju', label: 'Saus keju', add: 3000 }
-        ]}
-      ]},
-    { id: 'dimsum-udang', name: 'Dimsum Udang', cat: 'Dimsum', price: 18000,
-      desc: 'Dimsum isi udang utuh yang kenyal dan manis, aroma bawang putih yang menggoda.',
-      img: 'assets/img/dimsum-udang.svg',
-      opts: [
-        { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
-          { id: 'isi4', label: 'Isi 4', add: 0 },
-          { id: 'isi6', label: 'Isi 6', add: 9000 }
-        ]}
-      ]},
-    { id: 'dimsum-mentai', name: 'Dimsum Mentai', cat: 'Dimsum', price: 22000, flag: 'Favorit',
-      desc: 'Dimsum ayam disiram saus mentai creamy, dibakar sebentar hingga wangi.',
-      img: 'assets/img/dimsum-mentai.svg' },
-    { id: 'siomay', name: 'Siomay Bandung', cat: 'Dimsum', price: 12000,
-      desc: 'Siomay ikan tenggiri dengan bumbu kacang gurih, kecap, dan perasan jeruk limau.',
-      img: 'assets/img/siomay.svg',
-      opts: [
-        { key: 'level', label: 'Level bumbu kacang', type: 'radio', required: true, choices: [
-          { id: 'normal', label: 'Normal', add: 0 },
-          { id: 'pedas', label: 'Pedas', add: 0 }
-        ]}
-      ]},
-
-    // -------- Mie Ayam --------
-    { id: 'mie-ayam', name: 'Mie Ayam Original', cat: 'Mie Ayam', price: 15000, flag: 'Best Seller', hot: true,
-      desc: 'Mie kenyal dengan ayam kecap manis gurih, sawi segar, dan kuah kaldu bening.',
-      img: 'assets/img/mie-ayam.svg',
-      opts: [
-        { key: 'mie', label: 'Pilih mie', type: 'radio', required: true, choices: [
-          { id: 'kuning', label: 'Mie kuning', add: 0 },
-          { id: 'yamin', label: 'Mie yamin (manis)', add: 0 },
-          { id: 'bihun', label: 'Bihun', add: 0 }
-        ]},
-        { key: 'pedas', label: 'Sambal & level', type: 'check', required: false, choices: [
-          { id: 'sambal', label: 'Pakai sambal', add: 0 },
-          { id: 'kuah', label: 'Kuah dipisah', add: 0 },
-          { id: 'bawang', label: 'Bawang goreng ekstra', add: 2000 }
-        ]}
-      ]},
-    { id: 'mie-ayam-bakso', name: 'Mie Ayam Bakso', cat: 'Mie Ayam', price: 20000,
-      desc: 'Mie ayam lengkap dengan 3 bakso sapi kenyal dan pangsit goreng renyah.',
-      img: 'assets/img/mie-ayam-bakso.svg',
-      opts: [
-        { key: 'mie', label: 'Pilih mie', type: 'radio', required: true, choices: [
-          { id: 'kuning', label: 'Mie kuning', add: 0 },
-          { id: 'yamin', label: 'Mie yamin (manis)', add: 0 }
-        ]}
-      ]},
-    { id: 'mie-ayam-jumbo', name: 'Mie Ayam Jumbo', cat: 'Mie Ayam', price: 25000, flag: 'Porsi Besar',
-      desc: 'Porsi jumbo untuk yang lapar berat: mie, ayam, bakso, pangsit, dan telur rebus.',
-      img: 'assets/img/mie-ayam-jumbo.svg' },
-    { id: 'mie-yamin', name: 'Mie Yamin Manis', cat: 'Mie Ayam', price: 15000,
-      desc: 'Mie yamin kecap manis tanpa kuah, ayam gurih, dan taburan bawang goreng.',
-      img: 'assets/img/mie-yamin.svg' },
-
-    // -------- Kebab Berger --------
-    { id: 'kebab-ayam', name: 'Kebab Ayam Berger', cat: 'Kebab', price: 17000, flag: 'Best Seller', hot: true,
-      desc: 'Kebab ayam panggang dengan saus mayo, keju, dan sayuran segar dalam tortilla lembut.',
-      img: 'assets/img/kebab-ayam.svg',
+    // -------- Kebab & Burger --------
+    { id: 'kebab', name: 'Kebab', cat: 'Kebab & Burger', price: 6000, flag: 'Best Seller', hot: true,
+      desc: 'Kebab isi ayam panggang, sayuran segar, dan saus spesial dalam kulit tortilla lembut.',
+      img: 'assets/img/kebab.svg',
       opts: [
         { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
           { id: 'l0', label: 'Tidak pedas', add: 0 },
@@ -104,80 +34,117 @@
           { id: 'l2', label: 'Pedas maksimal', add: 0 }
         ]},
         { key: 'extra', label: 'Tambahan', type: 'check', required: false, choices: [
-          { id: 'keju', label: 'Keju mozzarella ekstra', add: 5000 },
-          { id: 'telur', label: 'Telur', add: 3000 },
-          { id: 'saus', label: 'Saus ekstra', add: 2000 }
+          { id: 'keju', label: 'Keju ekstra', add: 3000 },
+          { id: 'telur', label: 'Telur', add: 2000 }
         ]}
       ]},
-    { id: 'kebab-sapi', name: 'Kebab Sapi Berger', cat: 'Kebab', price: 22000,
-      desc: 'Daging sapi bumbu lada hitam, keju mozzarella, dan saus barbekyu spesial.',
-      img: 'assets/img/kebab-sapi.svg',
+    { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 7000,
+      desc: 'Burger klasik dengan patty ayam, selada, timun, dan saus mayo manis.',
+      img: 'assets/img/burger-biasa.svg',
+      opts: [
+        { key: 'saus', label: 'Saus', type: 'radio', required: true, choices: [
+          { id: 'mayo', label: 'Mayo', add: 0 },
+          { id: 'pedas', label: 'Mayo pedas', add: 0 },
+          { id: 'bbq', label: 'Barbekyu', add: 0 }
+        ]}
+      ]},
+    { id: 'burger-beef', name: 'Burger Beef Patties', cat: 'Kebab & Burger', price: 10000, flag: 'Favorit',
+      desc: 'Burger dengan patty daging sapi tebal, keju leleh, dan saus barbekyu.',
+      img: 'assets/img/burger-beef.svg' },
+    { id: 'mac-cheese-kecil', name: 'Mac and Cheese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
+      desc: 'Makaroni creamy saus keju dalam cup praktis, gurih dan mengenyangkan.',
+      img: 'assets/img/mac-cheese-kecil.svg' },
+    { id: 'mac-cheese-beef', name: 'Mac and Cheese + Beef Patties', cat: 'Kebab & Burger', price: 10000, flag: 'Porsi Lengkap',
+      desc: 'Mac and cheese creamy ditambah patty daging sapi, porsi lebih lengkap.',
+      img: 'assets/img/mac-cheese-beef.svg' },
+    { id: 'spaghetti-bolognese', name: 'Spaghetti Bolognese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
+      desc: 'Spaghetti saus bolognese daging dalam cup kecil, praktis buat ngemil.',
+      img: 'assets/img/spaghetti-bolognese.svg' },
+
+    // -------- Sosis --------
+    { id: 'sosis-chili-oil', name: 'Sosis Chili Oil', cat: 'Sosis', price: 1000, from: true,
+      desc: 'Sosis goreng disiram chili oil pedas gurih. Harga mulai dari Rp1.000, atur jumlah sesuai selera.',
+      img: 'assets/img/sosis-chili-oil.svg' },
+    { id: 'sosis-bumbu', name: 'Sosis Goreng Bumbu Tabur', cat: 'Sosis', price: 1000, from: true,
+      desc: 'Sosis goreng ditabur bumbu tabur aneka rasa. Harga mulai dari Rp1.000, atur jumlah sesuai selera.',
+      img: 'assets/img/sosis-bumbu.svg',
+      opts: [
+        { key: 'rasa', label: 'Rasa bumbu', type: 'radio', required: true, choices: [
+          { id: 'original', label: 'Original', add: 0 },
+          { id: 'pedas', label: 'Pedas', add: 0 },
+          { id: 'jagung', label: 'Jagung manis', add: 0 },
+          { id: 'keju', label: 'Keju', add: 0 }
+        ]}
+      ]},
+
+    // -------- Cireng & Basreng --------
+    { id: 'basreng-chili-oil', name: 'Basreng Chili Oil', cat: 'Cireng & Basreng', price: 5000, flag: 'Best Seller', hot: true,
+      desc: 'Baso aci goreng renyah disiram chili oil pedas, camilan favorit.',
+      img: 'assets/img/basreng-chili-oil.svg',
       opts: [
         { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
-          { id: 'l0', label: 'Tidak pedas', add: 0 },
           { id: 'l1', label: 'Pedas sedang', add: 0 },
           { id: 'l2', label: 'Pedas maksimal', add: 0 }
         ]}
       ]},
-    { id: 'kebab-sosis', name: 'Kebab Sosis Mozzarella', cat: 'Kebab', price: 20000,
-      desc: 'Sosis jumbo dan mozzarella meleleh, camilan favorit anak-anak.',
-      img: 'assets/img/kebab-sosis.svg' },
-    { id: 'kebab-duo', name: 'Kebab Duo Combo', cat: 'Kebab', price: 35000, was: 40000, flag: 'Combo',
-      desc: 'Dua kebab pilihan (ayam + sapi) dengan kentang goreng, cocok untuk berdua.',
-      img: 'assets/img/kebab-duo.svg' },
-
-    // -------- Seri Minuman --------
-    { id: 'es-teh', name: 'Es Teh Jumbo', cat: 'Minuman', price: 8000,
-      desc: 'Teh tubruk segar dengan es batu, manisnya bisa request sesuai selera.',
-      img: 'assets/img/es-teh.svg',
+    { id: 'cireng-chili-oil', name: 'Cireng Chili Oil', cat: 'Cireng & Basreng', price: 5000,
+      desc: 'Cireng kenyal goreng dengan siraman chili oil pedas gurih.',
+      img: 'assets/img/cireng-chili-oil.svg',
       opts: [
-        { key: 'manis', label: 'Tingkat manis', type: 'radio', required: true, choices: [
-          { id: 'normal', label: 'Normal', add: 0 },
-          { id: 'less', label: 'Kurang manis', add: 0 },
-          { id: 'no', label: 'Tanpa gula', add: 0 }
+        { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
+          { id: 'l1', label: 'Pedas sedang', add: 0 },
+          { id: 'l2', label: 'Pedas maksimal', add: 0 }
         ]}
       ]},
-    { id: 'lemon-tea', name: 'Lemon Tea Segar', cat: 'Minuman', price: 12000, flag: 'Segar',
-      desc: 'Teh dingin dengan perasan lemon asli dan potongan lemon segar.',
-      img: 'assets/img/lemon-tea.svg',
+    { id: 'cireng-kuah-keju', name: 'Cireng Kuah Keju', cat: 'Cireng & Basreng', price: 7000, flag: 'Favorit',
+      desc: 'Cireng kenyal dengan kuah keju creamy yang gurih, disajikan hangat.',
+      img: 'assets/img/cireng-kuah-keju.svg' },
+
+    // -------- Dimsum --------
+    { id: 'dimsum', name: 'Dimsum', cat: 'Dimsum', price: 3500, flag: 'Best Seller', hot: true,
+      desc: 'Dimsum ayam lembut dikukus fresh, disajikan dengan saus spesial. Pilih porsi sesuai selera.',
+      img: 'assets/img/dimsum.svg',
       opts: [
-        { key: 'es', label: 'Es', type: 'radio', required: true, choices: [
-          { id: 'normal', label: 'Es normal', add: 0 },
-          { id: 'less', label: 'Sedikit es', add: 0 },
-          { id: 'no', label: 'Tanpa es', add: 0 }
+        { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
+          { id: 'isi4', label: 'Isi 4', add: 0 },
+          { id: 'isi6', label: 'Isi 6', add: 1500 },
+          { id: 'isi10', label: 'Isi 10', add: 4500 }
         ]},
+        { key: 'saus', label: 'Saus tambahan', type: 'check', required: false, choices: [
+          { id: 'mentai', label: 'Saus mentai', add: 3000 },
+          { id: 'pedas', label: 'Saus pedas', add: 0 }
+        ]}
+      ]},
+    { id: 'dimsum-kuah-keju', name: 'Dimsum Kuah Keju', cat: 'Dimsum', price: 9000,
+      desc: 'Dimsum ayam disiram kuah keju creamy, hangat dan gurih.',
+      img: 'assets/img/dimsum-kuah-keju.svg' },
+
+    // -------- Minuman --------
+    { id: 'es-ubi-ungu', name: 'Es Ubi Ungu Original', cat: 'Minuman', price: 6000, flag: 'Segar',
+      desc: 'Es ubi ungu asli yang creamy dan manis alami, warnanya cantik.',
+      img: 'assets/img/es-ubi-ungu.svg',
+      opts: [
         { key: 'manis', label: 'Tingkat manis', type: 'radio', required: true, choices: [
           { id: 'normal', label: 'Normal', add: 0 },
           { id: 'less', label: 'Kurang manis', add: 0 }
         ]}
       ]},
-    { id: 'matcha-latte', name: 'Matcha Latte', cat: 'Minuman', price: 18000,
-      desc: 'Matcha premium dengan susu segar, creamy dan tidak terlalu manis.',
-      img: 'assets/img/matcha-latte.svg',
-      opts: [
-        { key: 'susu', label: 'Pilihan susu', type: 'radio', required: true, choices: [
-          { id: 'fresh', label: 'Susu segar', add: 0 },
-          { id: 'oat', label: 'Susu oat', add: 4000 }
-        ]}
-      ]},
-    { id: 'choco-ice', name: 'Chocolate Ice', cat: 'Minuman', price: 16000, flag: 'Favorit',
-      desc: 'Cokelat kental dingin dengan whipped cream dan taburan cokelat serut.',
-      img: 'assets/img/choco-ice.svg' },
-    { id: 'thai-tea', name: 'Thai Tea Original', cat: 'Minuman', price: 14000,
-      desc: 'Thai tea autentik, manis creamy dengan susu evaporasi.',
-      img: 'assets/img/thai-tea.svg' },
-    { id: 'mango-yakult', name: 'Mango Yakult', cat: 'Minuman', price: 15000, flag: 'Baru',
-      desc: 'Mangga segar dipadu yakult, asam manis menyegarkan.',
-      img: 'assets/img/mango-yakult.svg' }
+    { id: 'es-ubi-ungu-keju', name: 'Es Ubi Ungu Double Keju', cat: 'Minuman', price: 7000, flag: 'Favorit',
+      desc: 'Es ubi ungu dengan topping keju melimpah dua kali, manis gurih.',
+      img: 'assets/img/es-ubi-ungu-keju.svg' },
+    { id: 'es-cendol-kecebong', name: 'Es Cendol Kecebong', cat: 'Minuman', price: 6000,
+      desc: 'Es cendol dengan butiran kecebong kenyal, santan, dan gula aren segar.',
+      img: 'assets/img/es-cendol-kecebong.svg' }
   ];
 
-  var CATS = ['Semua', 'Dimsum', 'Mie Ayam', 'Kebab', 'Minuman'];
+  var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Minuman'];
   var CAT_META = {
-    'Semua':   { ico: 'fa-utensils',        short: 'Semua' },
-    'Dimsum':  { ico: 'fa-bowl-food',       short: 'Dimsum' },
-    'Mie Ayam':{ ico: 'fa-bowl-rice',       short: 'Mie Ayam' },
-    'Kebab':   { ico: 'fa-drumstick-bite',  short: 'Kebab' },
-    'Minuman': { ico: 'fa-mug-hot',         short: 'Minuman' }
+    'Semua':          { ico: 'fa-utensils',        short: 'Semua' },
+    'Kebab & Burger': { ico: 'fa-burger',          short: 'Kebab & Burger' },
+    'Sosis':          { ico: 'fa-hotdog',          short: 'Sosis' },
+    'Cireng & Basreng': { ico: 'fa-cookie-bite',   short: 'Cireng & Basreng' },
+    'Dimsum':         { ico: 'fa-bowl-food',       short: 'Dimsum' },
+    'Minuman':        { ico: 'fa-mug-hot',         short: 'Minuman' }
   };
 
   var grid = doc.getElementById('menu-grid');
@@ -238,6 +205,7 @@
       ? '<span class="mcard__flag' + (item.hot ? ' mcard__flag--hot' : '') + '">' + item.flag + '</span>'
       : '';
     var was = item.was ? '<span class="mcard__price-was">' + CURRENCY(item.was) + '</span>' : '';
+    var fromTag = item.from ? '<span class="mcard__price-from">Mulai dari</span>' : '';
     return '' +
       '<article class="mcard" data-id="' + item.id + '" data-cat="' + item.cat + '" tabindex="0" role="button" ' +
               'aria-label="' + item.name + ', ' + CURRENCY(item.price) + '. Ketuk untuk pesan">' +
@@ -250,7 +218,7 @@
           '<h3 class="mcard__title">' + item.name + '</h3>' +
           '<p class="mcard__desc">' + item.desc + '</p>' +
           '<div class="mcard__foot">' +
-            '<div class="mcard__price"><span class="mcard__price-now">' + CURRENCY(item.price) + '</span>' + was + '</div>' +
+            '<div class="mcard__price">' + fromTag + '<span class="mcard__price-now">' + CURRENCY(item.price) + '</span>' + was + '</div>' +
             '<span class="mcard__cta"><i class="fas fa-plus" aria-hidden="true"></i> Pilih</span>' +
           '</div>' +
         '</div>' +
@@ -343,6 +311,8 @@
     doc.getElementById('order-title').textContent = item.name;
     doc.getElementById('order-desc').textContent = item.desc;
     doc.getElementById('order-price').textContent = CURRENCY(item.price);
+    var fromEl = doc.getElementById('order-from');
+    if (fromEl) { fromEl.textContent = item.from ? 'Mulai dari' : ''; fromEl.hidden = !item.from; }
     var wasEl = doc.getElementById('order-was');
     wasEl.textContent = item.was ? CURRENCY(item.was) : '';
     wasEl.hidden = !item.was;

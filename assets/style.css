@@ -364,7 +364,12 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   margin-top: auto; padding-top: 13px; border-top: 1px dashed var(--ink-line);
 }
-.mcard__price { display: flex; align-items: baseline; gap: 7px; min-width: 0; }
+.mcard__price { display: flex; align-items: baseline; gap: 7px; min-width: 0; flex-wrap: wrap; }
+.mcard__price-from {
+  font-size: 10px; font-weight: var(--fw-semi); color: var(--gold-ink);
+  background: var(--gold-100); padding: 2px 7px; border-radius: var(--r-pill);
+  text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+}
 /* Harga — Chili Red */
 .mcard__price-now { font-size: 19.5px; font-weight: var(--fw-bold); color: var(--red); letter-spacing: -.02em; }
 .mcard__price-was { font-size: 13px; color: var(--ink-3); text-decoration: line-through; }
@@ -463,7 +468,11 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 }
 .order-title { font-size: 21px; font-weight: var(--fw-bold); color: var(--ink); margin-bottom: 6px; letter-spacing: -.01em; }
 .order-desc { font-size: 14px; color: var(--ink-2); line-height: 1.55; margin-bottom: 12px; }
-.order-price { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.order-price { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+.order-price__from {
+  font-size: 11.5px; font-weight: var(--fw-semi); color: var(--ink-2);
+  background: var(--gold-100); padding: 3px 9px; border-radius: var(--r-pill);
+}
 .order-price__now { font-size: 23px; font-weight: var(--fw-bold); color: var(--red); letter-spacing: -.02em; }
 .order-price__was { font-size: 13.5px; color: var(--ink-3); text-decoration: line-through; }
 
