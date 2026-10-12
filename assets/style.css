@@ -607,26 +607,6 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .head-wa__txt { display: none; }
 @media (min-width: 400px) { .head-wa__txt { display: inline; } }
 
-/* Tombol keranjang di header */
-.head-cart-btn {
-  position: relative;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 44px; height: 44px; border-radius: var(--r-pill);
-  background: var(--red-50); color: var(--red-ink);
-  border: 1.5px solid var(--red-100); cursor: pointer; flex-shrink: 0;
-  font-size: 17px;
-  transition: background-color var(--dur) var(--ease), color var(--dur) var(--ease), transform var(--dur) var(--ease);
-}
-.head-cart-btn:hover { background: var(--red); color: #fff; border-color: var(--red); transform: translateY(-1px); }
-.head-cart-btn.is-bump { animation: cartBump .4s var(--ease-out); }
-.head-cart-badge {
-  position: absolute; top: -5px; right: -5px; min-width: 19px; height: 19px;
-  padding: 0 5px; border-radius: var(--r-pill);
-  background: var(--red); color: #fff; font-size: 11px; font-weight: var(--fw-bold);
-  line-height: 19px; text-align: center; box-shadow: 0 2px 6px rgba(217, 39, 39, .4);
-}
-@keyframes cartBump { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
-
 /* ---------- 9. TOAST ---------- */
 .toast {
   position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
