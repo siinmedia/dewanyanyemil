@@ -426,6 +426,13 @@
   function renderCart() {
     var n = cartCount(), total = cartTotal();
 
+    // badge tombol keranjang di header
+    var hb = doc.getElementById('head-cart-badge');
+    if (hb) {
+      if (n > 0) { hb.hidden = false; hb.textContent = n > 99 ? '99+' : n; }
+      else { hb.hidden = true; }
+    }
+
     // bar mengambang
     if (n > 0) {
       cartBar.hidden = false;
@@ -509,6 +516,8 @@
   }
 
   doc.getElementById('cart-open').addEventListener('click', openCart);
+  var headCartBtn = doc.getElementById('head-cart-btn');
+  if (headCartBtn) headCartBtn.addEventListener('click', openCart);
   cartSheet.addEventListener('click', function (e) {
     if (e.target.closest('[data-close]')) { closeCart(); return; }
 

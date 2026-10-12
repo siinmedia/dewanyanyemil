@@ -27,7 +27,7 @@
     <meta name="theme-color" content="#D92727">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/style.css?v=dn019">
+    <link rel="stylesheet" href="assets/style.css?v=dn020">
 </head>
 
 <body class="page-order">
@@ -44,6 +44,10 @@
             </a>
 
             <div class="head-actions">
+                <button class="head-cart-btn" id="head-cart-btn" type="button" aria-label="Buka Keranjang">
+                    <i class="fas fa-cart-shopping" aria-hidden="true"></i>
+                    <span class="head-cart-badge" id="head-cart-badge" hidden>0</span>
+                </button>
                 <a href="#" class="head-wa" data-order-now aria-label="Chat WhatsApp">
                     <i class="fab fa-whatsapp" aria-hidden="true"></i>
                     <span class="head-wa__txt">Chat</span>
@@ -191,7 +195,7 @@
     </div>
 
     <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
-    <script src="assets/app.js?v=dn019"></script>
+    <script src="assets/app.js?v=dn020"></script>
 </body>
 
 </html>
