@@ -13,7 +13,7 @@
 
   /* ---------- Konfigurasi ---------- */
   // Nomor WhatsApp tujuan order (format internasional tanpa "+").
-  var WA_NUMBER = '6285225617090';
+  var WA_NUMBER = '628976255469';
   var STORE = 'Dewanya Nyemil';
   var CURRENCY = function (n) { return 'Rp' + Number(n).toLocaleString('id-ID'); };
 
