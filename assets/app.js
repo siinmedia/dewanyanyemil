@@ -119,6 +119,18 @@
       desc: 'Dimsum ayam disiram kuah keju creamy, hangat dan gurih.',
       img: 'assets/img/Dimsum Kuah Keju.webp' },
 
+    // -------- Kwetiaw & Mie --------
+    { id: 'kwetiaw-chili-oil', name: 'Kwetiaw Chili Oil', cat: 'Kwetiaw & Mie', price: 10000, flag: 'Baru', hot: true,
+      desc: 'Kwetiaw kenyal goreng dengan siraman chili oil pedas gurih, topping melimpah.',
+      img: 'assets/img/kwetiaw-chili-oil.webp',
+      opts: [
+        { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
+          { id: 'l0', label: 'Tidak pedas', add: 0 },
+          { id: 'l1', label: 'Pedas sedang', add: 0 },
+          { id: 'l2', label: 'Pedas maksimal', add: 0 }
+        ]}
+      ]},
+
     // -------- Minuman --------
     { id: 'es-ubi-ungu', name: 'Es Ubi Ungu Original', cat: 'Minuman', price: 6000, flag: 'Segar',
       desc: 'Es ubi ungu asli yang creamy dan manis alami, warnanya cantik.',
@@ -137,13 +149,14 @@
       img: 'assets/img/Condensed Green Cendol Iced Dessert.webp' }
   ];
 
-  var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Minuman'];
+  var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Kwetiaw & Mie', 'Minuman'];
   var CAT_META = {
     'Semua':          { ico: 'fa-utensils',        short: 'Semua' },
     'Kebab & Burger': { ico: 'fa-burger',          short: 'Kebab & Burger' },
     'Sosis':          { ico: 'fa-hotdog',          short: 'Sosis' },
     'Cireng & Basreng': { ico: 'fa-cookie-bite',   short: 'Cireng & Basreng' },
     'Dimsum':         { ico: 'fa-bowl-food',       short: 'Dimsum' },
+    'Kwetiaw & Mie':  { ico: 'fa-utensils',        short: 'Kwetiaw & Mie' },
     'Minuman':        { ico: 'fa-mug-hot',         short: 'Minuman' }
   };
 
