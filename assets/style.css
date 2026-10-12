@@ -348,17 +348,16 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 }
 .mcard__flag--hot { background: var(--red); color: #fff; box-shadow: 0 1px 3px rgba(217, 39, 39, .28); }
 
-@media (min-width: 640px) {
-
+/* --- Card body / text (mobile-first) --- */
 .mcard__body { display: flex; flex-direction: column; flex-grow: 1; padding: 10px 10px 12px; }
 .mcard__title {
-  font-size: 14.5px; font-weight: var(--fw-semi); color: var(--ink);
+  font-size: 14px; font-weight: var(--fw-semi); color: var(--ink);
   margin-bottom: 3px; letter-spacing: -.01em;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-  line-height: 1.3;
+  line-height: 1.3; word-break: break-word;
 }
 .mcard__desc {
-  font-size: 11.5px; color: var(--ink-2); line-height: 1.4;
+  font-size: 11px; color: var(--ink-2); line-height: 1.4;
   margin-bottom: 8px; flex-grow: 1;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
@@ -372,7 +371,6 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   background: var(--gold-100); padding: 1px 5px; border-radius: var(--r-pill);
   text-transform: uppercase; letter-spacing: .03em; white-space: nowrap;
 }
-/* Harga — Chili Red */
 .mcard__price-now { font-size: 15px; font-weight: var(--fw-bold); color: var(--red); letter-spacing: -.01em; white-space: nowrap; }
 .mcard__price-was { font-size: 11px; color: var(--ink-3); text-decoration: line-through; }
 
@@ -395,6 +393,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   .mcard__price-now { font-size: 19.5px; }
   .mcard__price-was { font-size: 13px; }
   .mcard__cta { padding: 9px 15px; font-size: 13.5px; gap: 6px; }
+}
 
 /* Empty state */
 .empty {
