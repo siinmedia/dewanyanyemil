@@ -541,13 +541,12 @@
     lines.push('');
     lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
 
-    const payload = btoa(JSON.stringify({ nama: name, nomor: '0', nominal: cartTotal() }));
+    const payload = btoa(JSON.stringify({ nama: name || 'Pelanggan', nomor: '0', nominal: cartTotal() }));
     lines.push('');
     lines.push('💳 Link Pembayaran (QRIS):');
     lines.push(`https://dewanyanyemil.siindev.web.id/pay/${payload}`);
     openWA(lines.join('\n'));
     closeCart();
-    toast('Pesanan dibuka di WhatsApp. Tekan kirim untuk menyelesaikan.');
   });
 
   /* -- Esc menutup panel yang terbuka -- */
