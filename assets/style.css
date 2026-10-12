@@ -633,6 +633,7 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .foot__h {
   color: var(--gold); font-size: 12px; font-weight: var(--fw-semi);
   letter-spacing: .14em; text-transform: uppercase; margin-bottom: 15px;
+}
 .foot__list { display: grid; gap: 10px; }
 .foot__list a, .foot__list span { color: rgba(255, 255, 255, .70); line-height: 1.5; }
 .foot__list a:hover { color: var(--gold); }
