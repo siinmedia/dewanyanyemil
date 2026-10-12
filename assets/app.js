@@ -166,15 +166,8 @@
     });
   }
 
-  var toastEl = doc.getElementById('toast');
-  var toastTimer;
-  function toast(msg) {
-    if (!toastEl) return;
-    toastEl.textContent = msg;
-    toastEl.classList.add('is-show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function () { toastEl.classList.remove('is-show'); }, 2600);
-  }
+  var toastEl = null;
+  function toast() {}
 
   /* ---------- Label opsi terpilih (dipakai popup & keranjang) ---------- */
   function pickedLabels(item, choices) {
@@ -242,38 +235,9 @@
     grid.innerHTML = list.map(cardHtml).join('');
   }
 
-  /* ---------- 2. Chip kategori ---------- */
-  var chipBar = doc.getElementById('menu-chips');
-  if (chipBar) {
-    chipBar.innerHTML = CATS.map(function (c) {
-      var meta = CAT_META[c] || { ico: 'fa-utensils', short: c };
-      var n = c === 'Semua' ? MENU.length : MENU.filter(function (m) { return m.cat === c; }).length;
-      return '<button class="chip' + (c === 'Semua' ? ' is-active' : '') + '" type="button" role="tab" ' +
-             'aria-selected="' + (c === 'Semua') + '" data-cat="' + c + '">' +
-             '<i class="fas ' + meta.ico + ' chip__ico"></i> ' + meta.short +
-             '<span class="chip__n">' + n + '</span></button>';
-    }).join('');
-
-    chipBar.addEventListener('click', function (e) {
-      var b = e.target.closest('.chip');
-      if (!b) return;
-      setCat(b.getAttribute('data-cat'));
-    });
-  }
-
+  /* ---------- 2. Filter kategori (dinonaktifkan) ---------- */
   function setCat(cat) {
     activeCat = cat;
-    if (chipBar) {
-      chipBar.querySelectorAll('.chip').forEach(function (c) {
-        var on = c.getAttribute('data-cat') === cat;
-        c.classList.toggle('is-active', on);
-        c.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      var act = chipBar.querySelector('.chip.is-active');
-      if (act && act.scrollIntoView) {
-        try { act.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' }); } catch (err) {}
-      }
-    }
     render();
   }
 
@@ -580,7 +544,7 @@
     const payload = btoa(JSON.stringify({ nama: name, nomor: '0', nominal: cartTotal() }));
     lines.push('');
     lines.push('💳 Link Pembayaran (QRIS):');
-    lines.push(`https://payment.siin.qzz.io/pay/${payload}`);
+    lines.push(`https://dewanyanyemil.siindev.web.id/pay/${payload}`);
     openWA(lines.join('\n'));
     closeCart();
     toast('Pesanan dibuka di WhatsApp. Tekan kirim untuk menyelesaikan.');
@@ -609,17 +573,6 @@
     el.addEventListener('click', function (e) {
       e.preventDefault();
       openWA('Halo ' + STORE + ', saya mau pesan. Boleh info menu & ongkirnya?');
-    });
-  });
-
-  /* -- Lompat ke kategori dari footer -- */
-  doc.querySelectorAll('[data-jump]').forEach(function (el) {
-    el.addEventListener('click', function (e) {
-      e.preventDefault();
-      if (searchInput) { searchInput.value = ''; query = ''; if (searchClear) searchClear.hidden = true; }
-      setCat(el.getAttribute('data-jump'));
-      var bar = doc.getElementById('menu-bar');
-      if (bar) window.scrollTo({ top: bar.offsetTop - 4, behavior: 'smooth' });
     });
   });
 
