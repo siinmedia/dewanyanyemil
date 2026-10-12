@@ -26,7 +26,7 @@
     // -------- Kebab & Burger --------
     { id: 'kebab', name: 'Kebab', cat: 'Kebab & Burger', price: 6000, flag: 'Best Seller', hot: true,
       desc: 'Kebab isi ayam panggang, sayuran segar, dan saus spesial dalam kulit tortilla lembut.',
-      img: 'assets/img/kebab.svg',
+      img: 'assets/img/kebeb.webp',
       opts: [
         { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
           { id: 'l0', label: 'Tidak pedas', add: 0 },
@@ -40,7 +40,7 @@
       ]},
     { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 7000,
       desc: 'Burger klasik dengan patty ayam, selada, timun, dan saus mayo manis.',
-      img: 'assets/img/burger-biasa.svg',
+      img: 'assets/img/burger biasa.webp',
       opts: [
         { key: 'saus', label: 'Saus', type: 'radio', required: true, choices: [
           { id: 'mayo', label: 'Mayo', add: 0 },
@@ -50,24 +50,24 @@
       ]},
     { id: 'burger-beef', name: 'Burger Beef Patties', cat: 'Kebab & Burger', price: 10000, flag: 'Favorit',
       desc: 'Burger dengan patty daging sapi tebal, keju leleh, dan saus barbekyu.',
-      img: 'assets/img/burger-beef.svg' },
+      img: 'assets/img/burger peties.webp' },
     { id: 'mac-cheese-kecil', name: 'Mac and Cheese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
       desc: 'Makaroni creamy saus keju dalam cup praktis, gurih dan mengenyangkan.',
-      img: 'assets/img/mac-cheese-kecil.svg' },
+      img: 'assets/img/Mac and Cheese Cup Kecil.webp' },
     { id: 'mac-cheese-beef', name: 'Mac and Cheese + Beef Patties', cat: 'Kebab & Burger', price: 10000, flag: 'Porsi Lengkap',
       desc: 'Mac and cheese creamy ditambah patty daging sapi, porsi lebih lengkap.',
-      img: 'assets/img/mac-cheese-beef.svg' },
+      img: 'assets/img/Mac and Cheese Beef Patties.webp' },
     { id: 'spaghetti-bolognese', name: 'Spaghetti Bolognese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
       desc: 'Spaghetti saus bolognese daging dalam cup kecil, praktis buat ngemil.',
-      img: 'assets/img/spaghetti-bolognese.svg' },
+      img: 'assets/img/Spaghetti Bolognese Cup Kecil.webp' },
 
     // -------- Sosis --------
     { id: 'sosis-chili-oil', name: 'Sosis Chili Oil', cat: 'Sosis', price: 1000, from: true,
       desc: 'Sosis goreng disiram chili oil pedas gurih. Harga mulai dari Rp1.000, atur jumlah sesuai selera.',
-      img: 'assets/img/sosis-chili-oil.svg' },
+      img: 'assets/img/Sosis Chili Oil.webp' },
     { id: 'sosis-bumbu', name: 'Sosis Goreng Bumbu Tabur', cat: 'Sosis', price: 1000, from: true,
       desc: 'Sosis goreng ditabur bumbu tabur aneka rasa. Harga mulai dari Rp1.000, atur jumlah sesuai selera.',
-      img: 'assets/img/sosis-bumbu.svg',
+      img: 'assets/img/Sosis Goreng Bumbu Tabur.webp',
       opts: [
         { key: 'rasa', label: 'Rasa bumbu', type: 'radio', required: true, choices: [
           { id: 'original', label: 'Original', add: 0 },
@@ -80,7 +80,7 @@
     // -------- Cireng & Basreng --------
     { id: 'basreng-chili-oil', name: 'Basreng Chili Oil', cat: 'Cireng & Basreng', price: 5000, flag: 'Best Seller', hot: true,
       desc: 'Baso aci goreng renyah disiram chili oil pedas, camilan favorit.',
-      img: 'assets/img/basreng-chili-oil.svg',
+      img: 'assets/img/Basreng Chili Oil.webp',
       opts: [
         { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
           { id: 'l1', label: 'Pedas sedang', add: 0 },
@@ -89,7 +89,7 @@
       ]},
     { id: 'cireng-chili-oil', name: 'Cireng Chili Oil', cat: 'Cireng & Basreng', price: 5000,
       desc: 'Cireng kenyal goreng dengan siraman chili oil pedas gurih.',
-      img: 'assets/img/cireng-chili-oil.svg',
+      img: 'assets/img/Cireng Chili Oil.webp',
       opts: [
         { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
           { id: 'l1', label: 'Pedas sedang', add: 0 },
@@ -98,12 +98,12 @@
       ]},
     { id: 'cireng-kuah-keju', name: 'Cireng Kuah Keju', cat: 'Cireng & Basreng', price: 7000, flag: 'Favorit',
       desc: 'Cireng kenyal dengan kuah keju creamy yang gurih, disajikan hangat.',
-      img: 'assets/img/cireng-kuah-keju.svg' },
+      img: 'assets/img/Cireng Kuah Keju.webp' },
 
     // -------- Dimsum --------
     { id: 'dimsum', name: 'Dimsum', cat: 'Dimsum', price: 3500, flag: 'Best Seller', hot: true,
       desc: 'Dimsum ayam lembut dikukus fresh, disajikan dengan saus spesial. Pilih porsi sesuai selera.',
-      img: 'assets/img/dimsum.svg',
+      img: 'assets/img/Dimsum.webp',
       opts: [
         { key: 'porsi', label: 'Porsi', type: 'radio', required: true, choices: [
           { id: 'isi4', label: 'Isi 4', add: 0 },
@@ -117,12 +117,12 @@
       ]},
     { id: 'dimsum-kuah-keju', name: 'Dimsum Kuah Keju', cat: 'Dimsum', price: 9000,
       desc: 'Dimsum ayam disiram kuah keju creamy, hangat dan gurih.',
-      img: 'assets/img/dimsum-kuah-keju.svg' },
+      img: 'assets/img/Dimsum Kuah Keju.webp' },
 
     // -------- Minuman --------
     { id: 'es-ubi-ungu', name: 'Es Ubi Ungu Original', cat: 'Minuman', price: 6000, flag: 'Segar',
       desc: 'Es ubi ungu asli yang creamy dan manis alami, warnanya cantik.',
-      img: 'assets/img/es-ubi-ungu.svg',
+      img: 'assets/img/Es Ubi Ungu Original.webp',
       opts: [
         { key: 'manis', label: 'Tingkat manis', type: 'radio', required: true, choices: [
           { id: 'normal', label: 'Normal', add: 0 },
@@ -131,10 +131,10 @@
       ]},
     { id: 'es-ubi-ungu-keju', name: 'Es Ubi Ungu Double Keju', cat: 'Minuman', price: 7000, flag: 'Favorit',
       desc: 'Es ubi ungu dengan topping keju melimpah dua kali, manis gurih.',
-      img: 'assets/img/es-ubi-ungu-keju.svg' },
+      img: 'assets/img/Es Ubi Ungu Double Keju.webp' },
     { id: 'es-cendol-kecebong', name: 'Es Cendol Kecebong', cat: 'Minuman', price: 6000,
       desc: 'Es cendol dengan butiran kecebong kenyal, santan, dan gula aren segar.',
-      img: 'assets/img/es-cendol-kecebong.svg' }
+      img: 'assets/img/Condensed Green Cendol Iced Dessert.webp' }
   ];
 
   var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Minuman'];
@@ -577,6 +577,10 @@
     lines.push('');
     lines.push('Mohon konfirmasi ketersediaan & ongkir. Terima kasih!');
 
+    const payload = btoa(JSON.stringify({ nama: name, nomor: '0', nominal: cartTotal() }));
+    lines.push('');
+    lines.push('💳 Link Pembayaran (QRIS):');
+    lines.push(`https://payment.siin.qzz.io/pay/${payload}`);
     openWA(lines.join('\n'));
     closeCart();
     toast('Pesanan dibuka di WhatsApp. Tekan kirim untuk menyelesaikan.');
