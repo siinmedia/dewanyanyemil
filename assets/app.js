@@ -59,7 +59,13 @@
       img: 'assets/img/Mac and Cheese Beef Patties.webp' },
     { id: 'spaghetti-bolognese', name: 'Spaghetti Bolognese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
       desc: 'Spaghetti saus bolognese daging dalam cup kecil, praktis buat ngemil.',
-      img: 'assets/img/Spaghetti Bolognese Cup Kecil.webp' },
+      img: 'assets/img/Spaghetti Bolognese Cup Kecil.webp',
+      opts: [
+        { key: 'varian', label: 'Varian', type: 'radio', required: true, choices: [
+          { id: 'reguler', label: 'Reguler', add: 0 },
+          { id: 'daging', label: 'Extra daging', add: 5000 }
+        ]}
+      ]},
 
     // -------- Sosis --------
     { id: 'sosis-chili-oil', name: 'Sosis Chili Oil', cat: 'Sosis', price: 1000, from: true,
