@@ -137,7 +137,14 @@
         ]}
       ]},
 
+    { id: 'lumpia-taro', name: 'Lumpia Taro (Isi 2)', cat: 'Camilan', price: 3000, flag: 'Baru',
+      desc: 'Lumpia renyah dengan isian taro, satu porsi berisi 2 buah.',
+      img: 'assets/img/lumpia-taro.webp' },
+
     // -------- Minuman --------
+    { id: 'es-semangka-nata-de-coco', name: 'Es Semangka Nata de Coco', cat: 'Minuman', price: 5000, flag: 'Baru',
+      desc: 'Es semangka segar dengan potongan nata de coco, disajikan dingin.',
+      img: 'assets/img/es-semangka-nata-de-coco.webp' },
     { id: 'es-ubi-ungu', name: 'Es Ubi Ungu Original', cat: 'Minuman', price: 6000, flag: 'Segar',
       desc: 'Es ubi ungu asli yang creamy dan manis alami, warnanya cantik.',
       img: 'assets/img/Es Ubi Ungu Original.webp',
@@ -155,7 +162,7 @@
       img: 'assets/img/Condensed Green Cendol Iced Dessert.webp' }
   ];
 
-  var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Kwetiaw & Mie', 'Minuman'];
+  var CATS = ['Semua', 'Kebab & Burger', 'Sosis', 'Cireng & Basreng', 'Dimsum', 'Kwetiaw & Mie', 'Camilan', 'Minuman'];
   var CAT_META = {
     'Semua':          { ico: 'fa-utensils',        short: 'Semua' },
     'Kebab & Burger': { ico: 'fa-burger',          short: 'Kebab & Burger' },
@@ -163,6 +170,7 @@
     'Cireng & Basreng': { ico: 'fa-cookie-bite',   short: 'Cireng & Basreng' },
     'Dimsum':         { ico: 'fa-bowl-food',       short: 'Dimsum' },
     'Kwetiaw & Mie':  { ico: 'fa-utensils',        short: 'Kwetiaw & Mie' },
+    'Camilan':         { ico: 'fa-cookie-bite',     short: 'Camilan' },
     'Minuman':        { ico: 'fa-mug-hot',         short: 'Minuman' }
   };
 
