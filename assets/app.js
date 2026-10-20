@@ -109,13 +109,7 @@
     // -------- Dimsum --------
     { id: 'dimsum', name: 'Dimsum', cat: 'Dimsum', price: 3500, flag: 'Best Seller', hot: true,
       desc: 'Dimsum ayam lembut kukus dengan saus spesial. Harga Rp3.500 per buah.',
-      img: 'assets/img/Dimsum.webp',
-      opts: [
-        { key: 'saus', label: 'Saus tambahan', type: 'check', required: false, choices: [
-          { id: 'mentai', label: 'Saus mentai', add: 3000 },
-          { id: 'pedas', label: 'Saus pedas', add: 0 }
-        ]}
-      ]},
+      img: 'assets/img/Dimsum.webp' },
     { id: 'dimsum-kuah-keju', name: 'Dimsum Kuah Keju', cat: 'Dimsum', price: 9000,
       desc: 'Dimsum ayam disiram kuah keju creamy, hangat dan gurih.',
       img: 'assets/img/Dimsum Kuah Keju.webp' },
