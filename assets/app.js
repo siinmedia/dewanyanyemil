@@ -38,7 +38,7 @@
           { id: 'telur', label: 'Telur', add: 2000 }
         ]}
       ]},
-    { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 7000,
+    { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 12000,
       desc: 'Burger klasik dengan patty ayam, selada, timun, dan saus mayo manis.',
       img: 'assets/img/burger biasa.webp',
       opts: [
@@ -48,7 +48,7 @@
           { id: 'bbq', label: 'Barbekyu', add: 0 }
         ]}
       ]},
-    { id: 'burger-beef', name: 'Burger Beef Patties', cat: 'Kebab & Burger', price: 10000, flag: 'Favorit',
+    { id: 'burger-beef', name: 'Burger Beef Patties', cat: 'Kebab & Burger', price: 12000, flag: 'Favorit',
       desc: 'Burger dengan patty daging sapi tebal, keju leleh, dan saus barbekyu.',
       img: 'assets/img/burger peties.webp' },
     { id: 'mac-cheese-kecil', name: 'Mac and Cheese Cup Kecil', cat: 'Kebab & Burger', price: 5000,
