@@ -38,7 +38,7 @@
           { id: 'telur', label: 'Telur', add: 2000 }
         ]}
       ]},
-    { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 12000,
+    { id: 'burger-biasa', name: 'Burger Biasa', cat: 'Kebab & Burger', price: 7000,
       desc: 'Burger klasik dengan patty ayam, selada, timun, dan saus mayo manis.',
       img: 'assets/img/burger biasa.webp',
       opts: [
