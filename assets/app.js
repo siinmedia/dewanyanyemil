@@ -123,6 +123,9 @@
     { id: 'dimsum-kuah-keju', name: 'Dimsum Kuah Keju', cat: 'Dimsum', price: 9000,
       desc: 'Dimsum ayam disiram kuah keju creamy, hangat dan gurih.',
       img: 'assets/img/Dimsum Kuah Keju.webp' },
+    { id: 'mini-pao', name: 'Mini Pao Coklat Isi 5', cat: 'Camilan', price: 7000, flag: 'Baru',
+      desc: 'Mini pao lembut isi coklat lumer dengan topping meses coklat. 1 porsi isi 5 pcs, manis dan lumer di mulut.',
+      img: 'assets/img/mini-pao.webp' },
 
     // -------- Kwetiaw & Mie --------
     { id: 'kwetiaw-chili-oil', name: 'Kwetiaw Chili Oil', cat: 'Kwetiaw & Mie', price: 10000, flag: 'Baru', hot: true,
