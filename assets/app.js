@@ -105,6 +105,16 @@
     { id: 'cireng-kuah-keju', name: 'Cireng Kuah Keju', cat: 'Cireng & Basreng', price: 7000, flag: 'Favorit',
       desc: 'Cireng kenyal dengan kuah keju creamy yang gurih, disajikan hangat.',
       img: 'assets/img/Cireng Kuah Keju.webp' },
+    { id: 'tahu-walik', name: 'Tahu Walik Isi 5', cat: 'Cireng & Basreng', price: 5000, flag: 'Baru',
+      desc: 'Tahu walik crispy isi adonan ayam gurih, renyah di luar lembut di dalam. 1 porsi isi 5 pcs + sambal pedas.',
+      img: 'assets/img/tahu-walik.webp',
+      opts: [
+        { key: 'level', label: 'Level pedas', type: 'radio', required: true, choices: [
+          { id: 'l0', label: 'Tidak pedas', add: 0 },
+          { id: 'l1', label: 'Pedas sedang', add: 0 },
+          { id: 'l2', label: 'Pedas maksimal', add: 0 }
+        ]}
+      ]},
 
     // -------- Dimsum --------
     { id: 'dimsum', name: 'Dimsum', cat: 'Dimsum', price: 3500, flag: 'Best Seller', hot: true,
